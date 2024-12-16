@@ -1,4 +1,5 @@
 const hre = require("hardhat");
+const fs = require("fs");  // Aggiungi questa riga per importare il modulo fs
 
 async function main() {
   const Election = await hre.ethers.getContractFactory("Election");
@@ -10,6 +11,12 @@ async function main() {
 
   // Indirizzo per il deploy
   console.log("Election contract deployed to:", receipt.contractAddress);
+
+  // Salva l'indirizzo in un file JSON
+  const data = {
+    address: receipt.contractAddress,
+  };
+  fs.writeFileSync("frontend/indirizzo.json", JSON.stringify(data, null, 2));  // Scrivi l'indirizzo nel file
 
   // Facciamo restituire i dati del candidato numero 1
   const candidate = await election.candidates(1);  // Assicurati che la funzione sia pubblica
