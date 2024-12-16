@@ -1,5 +1,6 @@
 const hre = require("hardhat");
 const fs = require("fs");  // Aggiungi questa riga per importare il modulo fs
+const crypto = require("crypto");
 
 async function main() {
   const Election = await hre.ethers.getContractFactory("Election");
@@ -17,6 +18,17 @@ async function main() {
     address: receipt.contractAddress,
   };
   fs.writeFileSync("frontend/indirizzo.json", JSON.stringify(data, null, 2));  // Scrivi l'indirizzo nel file
+
+  //File con ABI
+  const artifactPath = "./artifacts/contracts/Election.sol/Election.json";
+  const targetPath = "./frontend/abi.json";
+  if (fs.existsSync(artifactPath)) {
+    const artifactContent = fs.readFileSync(artifactPath, "utf-8");
+    fs.writeFileSync(targetPath, artifactContent); // Copia l'intero contenuto
+    console.log(`File copiato in ${targetPath}`);
+  } else {
+    console.error("Artifact non trovato:", artifactPath);
+  }  
 
   // Facciamo restituire i dati del candidato numero 1
   const candidate = await election.candidates(1);  // Assicurati che la funzione sia pubblica

@@ -8,22 +8,18 @@ let signer;
 let electionContract;
 let contractAddress; // Definire la variabile per l'indirizzo del contratto
 
-// ABI del contratto (non cambia)
-const contractABI = [
-    {
-        "inputs": [], "stateMutability": "nonpayable", "type": "constructor"
-    },
-    {
-        "inputs": [], "name": "candidatesCount", "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}], "stateMutability": "view", "type": "function"
-    },
-    {
-        "inputs": [{"internalType": "uint256", "name": "", "type": "uint256"}], "name": "candidates", "outputs": [
-            {"internalType": "uint256", "name": "id", "type": "uint256"},
-            {"internalType": "string", "name": "name", "type": "string"},
-            {"internalType": "uint256", "name": "voteCount", "type": "uint256"}
-        ], "stateMutability": "view", "type": "function"
+
+
+async function getABI() {
+    try {
+        const response = await fetch("abi.json");
+        const data = await response.json();
+        return data.abi;
+    } catch (error) {
+        console.error("Error fetching ABI:", error);
     }
-];
+}
+
 
 // Caricare dinamicamente l'indirizzo del contratto
 async function getContractAddress() {
@@ -61,6 +57,7 @@ connectButton.addEventListener("click", async () => {
                 return;
             }
 
+            contractABI = await getABI();
             // Inizializza il contratto
             electionContract = new ethers.Contract(contractAddress, contractABI, signer);
 
@@ -73,6 +70,23 @@ connectButton.addEventListener("click", async () => {
         alert("Metamask not found. Please install Metamask.");
     }
 });
+
+async function getContractInstance() {
+    try {
+      if (!contractAddress) {
+        console.error("Contract address not found!");
+        return;
+      }
+  
+      const contractFactory = new ethers.ContractFactory(Election.bytecode, Election.abi, signer); // Use the provided bytecode and ABI if available
+      const electionContract = await contractFactory.attach(contractAddress);
+  
+      // Use the contract instance for interaction (e.g., loadCandidates)
+      await loadCandidates(electionContract);
+    } catch (error) {
+      console.error("Error getting contract instance:", error);
+    }
+  }
 
 // Carica i candidati dal contratto
 async function loadCandidates() {
