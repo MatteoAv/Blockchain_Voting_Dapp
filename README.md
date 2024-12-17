@@ -2,7 +2,7 @@
 
 ## Installazione & Utilizzo
 
-### 0. Prerequisiti:
+##### 0. Prerequisiti:
    - **0.1**: Installa Hardhat:
      ```bash
      npm install --save-dev hardhat
