@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script defer src="script.js"></script>
   </head>
+
   <body>
     <div class="container" style="max-width: 650px;">
       <div class="row">
@@ -18,31 +19,47 @@
           <h1 class="text-center">Election DApp</h1>
           <hr/>
           <br/>
-          <div id="loader">
-            <p class="text-center">Loading...</p>
-          </div>
           <div id="content" style="display: none;">
             <table class="table">
               <thead>
                 <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Votes</th>
+                  <th scope="col">#ID</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col">Voti</th>
                 </tr>
               </thead>
               <tbody id="candidateList">
                 <!-- Candidati saranno aggiunti dinamicamente qui -->
               </tbody>
             </table>
-            <p id="userAddress" class="text-center"></p>
-            <p id="contractAddressDisplay" class="text-center"></p>
+            
+            <!-- <p id="contractAddressDisplay" class="text-center"></p> -->
           </div>
           <div id="connectSection" class="d-flex justify-content-center">
-            <button id="connectButton" class="btn btn-primary btn-lg">Connect to Metamask</button>
+            <button id="connectButton" class="btn btn-primary btn-lg">Connettiti a Metamask</button>
           </div>
+
+          <form onSubmit="App.castVote(); return false;">
+            <div class="form-group mb-3 mt-4">
+              <label for="candidatesSelect" class="mb-2 fw-bold">Seleziona un candidato</label>
+              <select class="form-select" id="candidatesSelect">
+                <option value="" disabled selected>Seleziona un candidato...</option>
+                <!-- Aggiungi le opzioni dinamicamente -->
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">
+              Vota
+            </button>
+            <hr />
+          </form>
+          
+
         </div>
+        <p id="alreadyVoted" class="text-center fw-bold">Hai già votato per queste elezioni</p>
+        <p id="userAddress" class="text-center fw-bold"></p>
       </div>
     </div>
+    
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

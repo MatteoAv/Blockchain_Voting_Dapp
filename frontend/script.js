@@ -1,15 +1,22 @@
+// Selezione degli elementi della pagina
 const connectButton = document.getElementById("connectButton");
 const userAddress = document.getElementById("userAddress");
 const candidateList = document.getElementById("candidateList");
-const addressDisplay = document.getElementById("contractAddressDisplay");
+//const addressDisplay = document.getElementById("contractAddressDisplay");
+const candidatesSelect = document.getElementById("candidatesSelect");
+const voteForm = document.querySelector("form");
+const alreadyVoted = document.getElementById("alreadyVoted");
+
+// Nascondi il form inizialmente
+voteForm.style.display = "none";
+alreadyVoted.style.display = "none";
 
 let provider;
 let signer;
 let electionContract;
-let contractAddress; // Definire la variabile per l'indirizzo del contratto
+let contractAddress;
 
-
-
+// Funzione per ottenere l'ABI
 async function getABI() {
     try {
         const response = await fetch("abi.json");
@@ -20,16 +27,15 @@ async function getABI() {
     }
 }
 
-
-// Caricare dinamicamente l'indirizzo del contratto
+// Funzione per ottenere l'indirizzo del contratto
 async function getContractAddress() {
     try {
         const response = await fetch("indirizzo.json");
         const data = await response.json();
-        console.log("Contract Address Loaded: ", data.address); 
+        console.log("Contract Address Loaded:", data.address);
         
         // Visualizza l'indirizzo sullo schermo
-        addressDisplay.textContent = `Contract Address: ${data.address}`;
+        //addressDisplay.textContent = `Contract Address: ${data.address}`;
         
         return data.address;
     } catch (error) {
@@ -47,7 +53,7 @@ connectButton.addEventListener("click", async () => {
             signer = provider.getSigner();
 
             const address = await signer.getAddress();
-            userAddress.textContent = `Your Address: ${address}`;
+            userAddress.textContent = `Il tuo account: ${address}`;
             connectButton.style.display = "none";
 
             // Ottieni l'indirizzo del contratto
@@ -57,12 +63,13 @@ connectButton.addEventListener("click", async () => {
                 return;
             }
 
-            contractABI = await getABI();
+            const contractABI = await getABI();
             // Inizializza il contratto
             electionContract = new ethers.Contract(contractAddress, contractABI, signer);
 
-            // Mostra i candidati
+            // Mostra i candidati e aggiorna il form
             await loadCandidates();
+            await renderForm();
         } catch (error) {
             console.error("Error connecting to Metamask:", error);
         }
@@ -71,24 +78,7 @@ connectButton.addEventListener("click", async () => {
     }
 });
 
-async function getContractInstance() {
-    try {
-      if (!contractAddress) {
-        console.error("Contract address not found!");
-        return;
-      }
-  
-      const contractFactory = new ethers.ContractFactory(Election.bytecode, Election.abi, signer); // Use the provided bytecode and ABI if available
-      const electionContract = await contractFactory.attach(contractAddress);
-  
-      // Use the contract instance for interaction (e.g., loadCandidates)
-      await loadCandidates(electionContract);
-    } catch (error) {
-      console.error("Error getting contract instance:", error);
-    }
-  }
-
-// Carica i candidati dal contratto
+// Funzione per caricare i candidati
 async function loadCandidates() {
     try {
         if (!electionContract) {
@@ -109,9 +99,85 @@ async function loadCandidates() {
             candidateList.appendChild(li);
         }
 
-        document.getElementById("loader").style.display = "none";
+        
         document.getElementById("content").style.display = "block";
     } catch (error) {
         console.error("Error loading candidates:", error);
     }
 }
+
+// Funzione per aggiornare il form con la lista dei candidati
+async function renderForm() {
+    try {
+        if (!electionContract) {
+            console.error("Election contract is not initialized.");
+            return;
+        }
+
+        const count = await electionContract.candidatesCount();
+        candidatesSelect.innerHTML = "";  // Rimuove tutte le opzioni precedenti
+
+        // Aggiungi il placeholder
+        const placeholderOption = document.createElement("option");
+        placeholderOption.value = "";
+        placeholderOption.disabled = true;
+        placeholderOption.selected = true;
+        placeholderOption.textContent = "Scegli...";
+        candidatesSelect.appendChild(placeholderOption);
+
+        // Aggiungi le opzioni per i candidati
+        for (let i = 1; i <= count; i++) {
+            const candidate = await electionContract.candidates(i);
+            const option = document.createElement("option");
+            option.value = candidate.id;
+            option.textContent = candidate.name;
+            candidatesSelect.appendChild(option);
+        }
+
+        const userAddress = await signer.getAddress();
+        const hasVoted = await electionContract.voters(userAddress);
+
+        if (hasVoted) {
+            voteForm.style.display = "none"; // Nascondi il form se l'utente ha già votato
+            alreadyVoted.style.display = "block";
+        } else {
+            voteForm.style.display = "block"; // Mostra il form se l'utente non ha ancora votato
+        }
+    } catch (error) {
+        console.error("Error rendering form:", error);
+    }
+}
+
+
+// Funzione per inviare un voto
+voteForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    try {
+        if (!electionContract) {
+            console.error("Election contract is not initialized.");
+            return;
+        }
+
+        const candidateId = candidatesSelect.value;
+        const userAddress = await signer.getAddress();
+
+        // Invia il voto al contratto
+        const tx = await electionContract.vote(candidateId, { from: userAddress });
+        console.log("Transaction sent:", tx);
+
+        alert("Votazione avvenuta con successo!");
+
+        // Mostra il caricamento mentre si aggiorna lo stato
+        document.getElementById("content").style.display = "none";
+        
+
+        // Aspetta la conferma della transazione
+        await tx.wait();
+
+        // Ricarica i dati dei candidati
+        await loadCandidates();
+        await renderForm();
+    } catch (error) {
+        console.error("Error casting vote:", error);
+    }
+});
