@@ -25,10 +25,19 @@
    git clone https://github.com/MatteoAv/Blockchain_Voting_Dapp
    ``` 
 #### 2. Spostati nella cartella del progetto ed apri il terminale
-#### 3. Avvia una blockchain locale: npx hardhat node
+#### 3. Avvia una blockchain locale:
+ ```bash
+     npm hardhat node
+ ```
 #### 4. Apri una nuova finestra del terminale sempre nella cartella del progetto
-#### 5. Esegui il deploy del contratto: npx hardhat run scripts/deploy.js --network localhost
-#### 6. Spostati nella cartella frontend ed esegui il comando: http-server
+#### 5. Esegui il deploy del contratto: 
+ ```bash
+     npx hardhat run scripts/deploy.js --network localhost
+ ```
+#### 6. Spostati nella cartella frontend ed esegui il comando: 
+ ```bash
+     http-server
+ ```
 #### 7. Clicca su uno dei server che vengono restituiti per aprire la pagina web
 #### 8. Importa in MetaMask uno degli account creati nella blockchain locale
 #### 9. Clicca sul pulsante "Connettiti a Metamask" per votare
