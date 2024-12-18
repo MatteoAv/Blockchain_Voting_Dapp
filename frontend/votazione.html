@@ -6,26 +6,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Election DApp</title>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Logica della votazione -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script defer src="script.js"></script>
 
+    <!-- Favicons -->
+    <link href="assets/img/letter-f.png" rel="icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/glightbox@3.1.0/dist/css/glightbox.min.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet">
+
     <style>
-        body {
-        min-height: 100vh;
+      html, body {
+        height: 100%;
+        margin: 0;
         display: flex;
         flex-direction: column;
-        }
+      }
 
-        .container {
-        flex: 1; /* Rende il contenuto principale espandibile per occupare lo spazio disponibile */
-        }
-    </style>    
+      .container {
+        flex-grow: 1; /* Spinge il contenuto verso l'alto, lasciando il footer in basso */
+      }
+    </style>
+
+
   </head>
 
   <body>
-    <!-- Div dove la navbar verrà caricata -->
+
     <div id="navbar-container"></div>
 
     <div class="container" style="max-width: 650px;">
@@ -71,31 +92,40 @@
       </div>
     </div>
 
-    <!-- Div per caricare il footer -->
-    <div id="footer-placeholder"></div>    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script>
+      fetch('header.html')
+          .then(response => response.text())
+          .then(data => document.getElementById('navbar-container').innerHTML = data);
+      fetch('footer.html')
+          .then(response => response.text())
+          .then(data => document.getElementById('footer-container').innerHTML = data);                  
+  </script>
 
     <!-- jQuery (necessario per i plugin JavaScript di Bootstrap) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include Bootstrap JS -->
+
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Script per caricare la navbar e il footer -->
-    <script>
-      // Carica la navbar
-      fetch('navbar.html')
-        .then(response => response.text())
-        .then(html => {
-          document.getElementById('navbar-container').innerHTML = html;
-        })
-        .catch(err => console.warn('Errore nel caricamento della navbar:', err));
-
-      // Carica il footer
-      fetch('footer.html')
-        .then(response => response.text())
-        .then(html => {
-          document.getElementById('footer-placeholder').innerHTML = html;
-        })
-        .catch(err => console.warn('Errore nel caricamento del footer:', err));
-    </script>
+    <!-- Main JS File -->
+    <script src="assets/js/main.js"></script>
   </body>
 </html>

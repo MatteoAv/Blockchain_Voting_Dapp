@@ -1,104 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FairVote - La tua piattaforma per le votazioni</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Inline CSS -->
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* Assicura che il contenitore copra tutta la pagina */
-            /*COMMENTO DI PROVA*/
-        }
-        main {
-            flex: 1; /* Riempie lo spazio tra header e footer */
-        }
-        /* Header styling */
-        header {
-            position: relative;
-            height: 50vh; /* Imposta l'altezza a tutta la finestra del browser */
-            overflow: hidden; /* Nasconde il contenuto che va oltre il container */
-        }
-        /* Styling del carousel */
-        #headerCarousel {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .header-content {
-            position: relative;
-            z-index: 10; /* Assicura che il testo sia sopra l'immagine */
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Aggiungi ombra al testo per visibilità */
-        }
-    </style>
+    <title>FairVote</title>
+
+    <!-- Favicons -->
+    <link href="assets/img/letter-f.png" rel="icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/glightbox@3.1.0/dist/css/glightbox.min.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet">
+
+
 </head>
-<body>
-    <!-- Navbar -->
-    <div id="navbar-placeholder"></div>
+
+<body class="index-page">
 
     <!-- Header -->
-    <header class="bg-light text-center py-5">
-      <div id="headerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2500"> <!-- Aggiungi data-bs-interval per il ritardo automatico -->
-          <div class="carousel-inner">
-              <div class="carousel-item active">
-                  <img src="assets/image1.jpg" class="d-block w-100" alt="Image 1">
-              </div>
-              <div class="carousel-item">
-                  <img src="assets/image2.jpg" class="d-block w-100" alt="Image 2">
-              </div>
-              <div class="carousel-item">
-                  <img src="assets/image3.jpg" class="d-block w-100" alt="Image 3">
-              </div>
-          </div>
-      </div>
+    <div id="navbar-container"></div>
 
-      <!-- Text content overlay -->
-      <div class="header-content container">
-          <h1 class="display-4">Benvenuto su FairVote</h1>
-          <p class="lead text-secondary">La piattaforma che rende il voto semplice, sicuro e trasparente.</p>
-          <a href="#" class="btn btn-primary btn-lg mt-3">Scopri di più</a>
-      </div>
-  </header>
+    <!-- Hero Section -->
+    <section id="hero" class="hero section dark-background">
+        <img src="assets/img/image2.jpg" alt="" data-aos="fade-in">
 
-    <!-- Main Content -->
-    <main class="container my-5">
-        <h2 class="text-center">Cosa vuoi fare oggi?</h2>
-        <div class="row text-center mt-4">
-            <div class="col-md-4">
-                <a href="votazione.html" class="btn btn-outline-primary btn-lg w-100">Vota</a>
+        <div class="container">
+            <div class="row justify-content-center text-center" data-aos="fade-up" data-aos-delay="100">
+                <div class="col-xl-6 col-lg-8">
+                    <h2 style="white-space: nowrap;">Benvenuto su Fair<span>Vote</span></h2>
+                    <p>La piattaforma che rende le votazioni semplici, sicure e trasparenti</p>
+                </div>
             </div>
-            <div class="col-md-4">
-                <a href="#" class="btn btn-outline-primary btn-lg w-100">Crea Elezioni</a>
-            </div>
-            <div class="col-md-4">
-                <a href="#" class="btn btn-outline-primary btn-lg w-100">Profilo</a>
+
+            <div class="row gy-4 mt-5 justify-content-center" data-aos="fade-up" data-aos-delay="200">
+                <div class="col-xl-3 col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="icon-box">
+                        <a href="">
+                            <i class="bi bi-file-earmark-plus"></i>
+                            <h3>Crea Elezioni</h3>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="icon-box">
+                        <a href="votazione.html">
+                            <i class="bi bi-clipboard-check"></i>
+                            <h3>Vota</h3>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-4" data-aos="fade-up" data-aos-delay="500">
+                    <div class="icon-box">
+                        <a href="">
+                            <i class="bi bi-person-circle"></i>
+                            <h3>Profilo</h3>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </main>
+    </section>
+    <!-- Hero Section -->
+
+
+    <!-- About Section -->
+    <section id="about" class="about section">
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div class="row gy-4">
+                <div class="col-lg-6 order-1 order-lg-2">
+                    <img src="assets/img/image1.jpg" class="img-fluid" alt="Voting illustration">
+                </div>
+                <div class="col-lg-6 order-2 order-lg-1 content">
+                    <h3>La tua voce è importante</h3>
+                    <p class="fst-italic">
+                        Viviamo in un'epoca in cui ogni scelta conta, e il voto è il più potente strumento di espressione individuale. 
+                        Con la nostra piattaforma vogliamo rendere questa esperienza più accessibile, sicura e trasparente, 
+                        per garantire che ogni voce venga ascoltata e rispettata.
+                    </p>
+                    <p>
+                        La nostra missione è semplice: promuovere una partecipazione attiva e consapevole attraverso la tecnologia. 
+                        Crediamo fermamente che il futuro appartenga a coloro che si impegnano per costruirlo. 
+                        Questa piattaforma è stata progettata per offrire a tutti un modo semplice e affidabile per esercitare il proprio diritto di voto, 
+                        ovunque si trovino.
+                    </p>
+                    <ul>
+                        <li><i class="bi bi-check2-all"></i> <span><strong>Sicurezza</strong>: utilizziamo tecnologie all'avanguardia per proteggere ogni voto e garantire la trasparenza del processo elettorale.</span></li>
+                        <li><i class="bi bi-check2-all"></i> <span><strong>Accessibilità</strong>: una piattaforma intuitiva e facilmente utilizzabile da chiunque, per abbattere ogni barriera.</span></li>
+                        <li><i class="bi bi-check2-all"></i> <span><strong>Inclusività</strong>: pensata per permettere a tutti di partecipare, perché ogni opinione conta.</span></li>
+                    </ul>
+                    <p>
+                        Votare non è solo un diritto, è un'opportunità per costruire il mondo che desideriamo. La democrazia si fonda sulla partecipazione attiva dei cittadini, 
+                        e il tuo contributo è essenziale. Grazie a questa piattaforma, puoi far sentire la tua voce con semplicità e sicurezza, sapendo che stai facendo la differenza.
+                    </p>
+                    <p>
+                        Unisciti a noi in questa missione per un futuro migliore. Ogni voto, anche il tuo, è una pietra miliare nel percorso verso una società più giusta e inclusiva.
+                        Non lasciare che qualcun altro decida per te. Esprimi le tue idee, condividi i tuoi valori e costruisci insieme a noi un domani più luminoso.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /About Section -->
+
 
     <!-- Footer -->
-    <div id="footer-placeholder"></div>
+    <div id="footer-container"></div>
 
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Import HTML Components -->
+    <!-- JavaScript per caricare la navbar -->
     <script>
-        // Import Navbar
-        fetch('navbar.html')
+        fetch('header.html')
             .then(response => response.text())
-            .then(data => document.getElementById('navbar-placeholder').innerHTML = data);
-
-        // Import Footer
+            .then(data => document.getElementById('navbar-container').innerHTML = data);
         fetch('footer.html')
             .then(response => response.text())
-            .then(data => document.getElementById('footer-placeholder').innerHTML = data);
+            .then(data => document.getElementById('footer-container').innerHTML = data);            
     </script>
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Main JS File -->
+    <script src="assets/js/main.js"></script>
+
 </body>
+
 </html>
