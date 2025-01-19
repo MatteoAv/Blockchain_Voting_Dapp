@@ -2,12 +2,16 @@
 const connectButton = document.getElementById("connectButton");
 const userAddress = document.getElementById("userAddress");
 const candidateList = document.getElementById("candidateList");
-//const addressDisplay = document.getElementById("contractAddressDisplay");
 const candidatesSelect = document.getElementById("candidatesSelect");
 const voteForm = document.querySelector("form");
 const alreadyVoted = document.getElementById("alreadyVoted");
 
+
+
+
 // Nascondi il form inizialmente
+
+
 voteForm.style.display = "none";
 alreadyVoted.style.display = "none";
 
@@ -56,6 +60,8 @@ connectButton.addEventListener("click", async () => {
             userAddress.textContent = `Il tuo account: ${address}`;
             connectButton.style.display = "none";
 
+            localStorage.setItem("userAddress", address);
+
             // Ottieni l'indirizzo del contratto
             contractAddress = await getContractAddress();
             if (!contractAddress) {
@@ -75,6 +81,34 @@ connectButton.addEventListener("click", async () => {
         }
     } else {
         alert("Metamask not found. Please install Metamask.");
+    }
+});
+
+window.addEventListener("DOMContentLoaded", async () => {
+    const storedAddress = localStorage.getItem("userAddress");
+    if (storedAddress) {
+        // Se l'indirizzo è già presente nel localStorage, connettiti automaticamente
+        const accounts = [storedAddress];
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+
+        userAddress.textContent = `Il tuo account: ${storedAddress}`;
+        connectButton.style.display = "none"; // Nascondi il pulsante
+
+        // Ottieni l'indirizzo del contratto
+        contractAddress = await getContractAddress();
+        if (!contractAddress) {
+            alert("Contract address not found!");
+            return;
+        }
+
+        const contractABI = await getABI();
+        // Inizializza il contratto
+        electionContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        // Mostra i candidati e aggiorna il form
+        await loadCandidates();
+        await renderForm();
     }
 });
 
@@ -181,3 +215,5 @@ voteForm.addEventListener("submit", async (event) => {
         console.error("Error casting vote:", error);
     }
 });
+
+

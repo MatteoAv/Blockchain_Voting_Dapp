@@ -17,3 +17,5 @@ node_modules
 ignition/deployments/chain-31337
 frontend/indirizzo.json
 frontend/abi.json
+frontend/abi.json
+.gitignore

@@ -8,6 +8,32 @@ contract Election{
         string name;
         uint voteCount;
     }
+
+    struct ElectionInfo {
+        string eelectionCode;
+        uint ecandidatesCount;
+        Candidate[] ecandidates;  
+        mapping(address => bool) evoters;
+    }    
+
+    mapping(string => ElectionInfo) public elections;
+    string[] public electionCodes;
+
+    // Funzione per creare una nuova votazione
+    function createElection(string memory _electionCode, string[] memory _candidateNames) public {
+        ElectionInfo storage newElection = elections[_electionCode];
+        newElection.eelectionCode = _electionCode;
+        for (uint i = 0; i < _candidateNames.length; i++) {
+            newElection.ecandidatesCount++;
+            newElection.ecandidates.push(Candidate(newElection.ecandidatesCount, _candidateNames[i], 0));
+        }
+        electionCodes.push(_electionCode);
+    }    
+
+    //il modificatore view indica che la funzione non puo modificare lo stato del contratto, puo solo leggere
+    function getElectionCount() public view returns (uint){
+        return electionCodes.length;
+    }
     
     //Il mapping tiene traccia degli utenti che hanno già votato, ad ogni indirizzo di un account associa un valore booleano
     //Il valore booleano è settato di default a FALSE

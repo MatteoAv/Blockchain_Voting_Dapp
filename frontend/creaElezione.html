@@ -5,13 +5,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Election DApp</title>
+    <title>FairVote</title>
 
     <!-- Logica della votazione -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <script defer src="votazione.js"></script>
+    <script defer src="creaElezione.js"></script>
     
-
     
 
     <!-- Favicons -->
@@ -53,47 +52,31 @@
 
     <div id="navbar-container"></div>
 
-    <div class="container" style="max-width: 650px; padding-top: 100px;">
+    <div class="container" style="max-width: 650px; padding-top: 150px;">
       <div class="row">
         <div class="col-lg-12">
-          <h1 class="text-center">Election DApp</h1>
-          <hr/>
-          <br/>
-          <div id="content" style="display: none;">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">#ID</th>
-                  <th scope="col">Nome</th>
-                  <th scope="col">Voti</th>
-                </tr>
-              </thead>
-              <tbody id="candidateList">
-                <!-- Candidati saranno aggiunti dinamicamente qui -->
-              </tbody>
-            </table>
-          </div>
           <div id="connectSection" class="d-flex justify-content-center">
             <button id="connectButton" class="btn btn-primary btn-lg">Connettiti a Metamask</button>
           </div>
-
-          <form onSubmit="App.castVote(); return false;">
-            <div class="form-group mb-3 mt-4">
-              <label for="candidatesSelect" class="mb-2 fw-bold">Seleziona un candidato</label>
-              <select class="form-select" id="candidatesSelect">
-                <option value="" disabled selected>Seleziona un candidato...</option>
-                <!-- Aggiungi le opzioni dinamicamente -->
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary mt-2">
-              Vota
-            </button>
-            <hr />
-          </form>
         </div>
-        <p id="alreadyVoted" class="text-center fw-bold">Hai già votato per queste elezioni</p>
-        <p id="userAddress" class="text-center fw-bold"></p>
       </div>
+      <p id="userAddress" class="text-center fw-bold"></p>
+        <!-- Form di Creazione Elezione -->
+      <div id="electionFormContainer" class="mt-4">
+        <h3>Crea una Nuova Elezione</h3>
+        <form id="electionForm">
+            <div class="mb-3">
+                <label for="electionCode" class="form-label">Codice Elezione</label>
+                <input type="text" id="electionCode" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="candidateNames" class="form-label">Nomi dei Candidati (separati da virgola, senza spazi)</label>
+                <input type="text" id="candidateNames" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Crea Elezione</button>
+        </form>
+      </div>
+      <button id="numButton" class="btn btn-success" style=" margin-top: 20px;">Counter</button>
     </div>
 
     <!-- Footer -->
