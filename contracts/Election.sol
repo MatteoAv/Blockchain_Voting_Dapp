@@ -14,15 +14,21 @@ contract Election{
         uint ecandidatesCount;
         Candidate[] ecandidates;  
         mapping(address => bool) evoters;
+        string description;
+        string title;
+        uint endDate;
     }    
 
     mapping(string => ElectionInfo) public elections;
     string[] public electionCodes;
 
     // Funzione per creare una nuova votazione
-    function createElection(string memory _electionCode, string[] memory _candidateNames) public {
+    function createElection(string memory _electionCode, string[] memory _candidateNames, string memory title, string memory description, uint endDate) public {
         ElectionInfo storage newElection = elections[_electionCode];
         newElection.eelectionCode = _electionCode;
+        newElection.title = title;
+        newElection.description = description;
+        newElection.endDate = endDate;
         for (uint i = 0; i < _candidateNames.length; i++) {
             newElection.ecandidatesCount++;
             newElection.ecandidates.push(Candidate(newElection.ecandidatesCount, _candidateNames[i], 0));

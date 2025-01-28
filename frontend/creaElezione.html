@@ -32,53 +32,86 @@
     <!-- Main CSS File -->
     <link href="assets/css/main.css" rel="stylesheet">
 
-    <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .container {
-        flex-grow: 1; /* Spinge il contenuto verso l'alto, lasciando il footer in basso */
-      }
-    </style>
 
 
   </head>
 
-  <body>
+  <style>
+    #testo {
+        margin-top: -300px;
+    }
+
+    #titoloElezione{
+      margin-top: -250px;
+    }
+  </style>
+
+  <body class="index-page">
 
     <div id="navbar-container"></div>
 
-    <div class="container" style="max-width: 650px; padding-top: 150px;">
-      <div class="row">
-        <div class="col-lg-12">
-          <div id="connectSection" class="d-flex justify-content-center">
-            <button id="connectButton" class="btn btn-primary btn-lg">Connettiti a Metamask</button>
-          </div>
-        </div>
-      </div>
-      <p id="userAddress" class="text-center fw-bold"></p>
-        <!-- Form di Creazione Elezione -->
-      <div id="electionFormContainer" class="mt-4">
-        <h3>Crea una Nuova Elezione</h3>
-        <form id="electionForm">
-            <div class="mb-3">
-                <label for="electionCode" class="form-label">Codice Elezione</label>
-                <input type="text" id="electionCode" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="candidateNames" class="form-label">Nomi dei Candidati (separati da virgola, senza spazi)</label>
-                <input type="text" id="candidateNames" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-success">Crea Elezione</button>
-        </form>
-      </div>
-      <button id="numButton" class="btn btn-success" style=" margin-top: 20px;">Counter</button>
-    </div>
 
+    <section class="hero section dark-background">
+      <img src="assets/img/image4.jpg" alt="" data-aos="fade-in">
+  
+      <!-- Titolo -->
+      <div class="container d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 100vh;">
+
+        <div id="testo" data-aos="fade-up" data-aos-delay="100">
+          <h2 id="titolo">Accedi con <span>Metamask</span></h2>
+          <p>Per creare una nuova elezione accedi con il tuo account Metamask</p>
+        </div>
+
+
+          <!-- Contenitore con pulsante -->
+          <div id="initialSection" data-aos="fade-up" data-aos-delay="100">
+              <div id="connectSection" class="mt-4" style="width: 400px;">
+                  <div class="icon-box mx-auto">
+                      <a href="javascript:void(0)" id="connectButton" onclick="event.preventDefault();">
+                          <i class="bi bi-wallet"></i>
+                          <h3>Accedi</h3>
+                      </a>
+                  </div>
+              </div>
+          </div>
+
+        
+  
+          <!-- Form di creazione elezione -->
+          <div id="electionFormContainer" class="mt-4" style="display: none;">
+            <!-- <p id="userAddress" class="fw-bold"></p> -->
+            <h3 id="titoloElezione">Crea una nuova elezione</h3>
+            <form id="electionForm" class="mt-5">
+                <div class="mb-3">
+                    <label for="electionCode" class="form-label">Codice Elezione</label>
+                    <input type="text" id="electionCode" class="form-control" placeholder="00000..." required>
+                </div>
+                <div class="mb-3">
+                  <label for="electionTitle" class="form-label">Titolo</label>
+                  <input type="text" id="electionTitle" class="form-control" placeholder="Titolo votazione" required>
+              </div>
+                <div class="mb-3">
+                    <label for="candidateNames" class="form-label">Nomi dei Candidati (separati da virgola)</label>
+                    <input type="text" id="candidateNames" class="form-control" placeholder="Candidato1,Candidato2,..." required>
+                </div>
+                <div class="mb-3">
+                    <label for="electionDescription" class="form-label">Descrizione</label>
+                    <textarea id="electionDescription" class="form-control" rows="3" placeholder="Descrizione votazione" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="endDate" class="form-label">Data Fine</label>
+                    <input type="date" id="endDate" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-outline-warning mt-4">Crea Elezione</button>
+            </form>
+            <button id="numButton" class="btn btn-outline-warning">Counter</button>
+          </div>
+        
+
+
+      </div>
+  </section>
+  
     <!-- Footer -->
     <div id="footer-container"></div>
 
@@ -88,7 +121,7 @@
           .then(data => document.getElementById('navbar-container').innerHTML = data);
       fetch('footer.html')
           .then(response => response.text())
-          .then(data => document.getElementById('footer-container').innerHTML = data);                  
+          .then(data => document.getElementById('footer-container').innerHTML = data);                          
   </script>
 
     <!-- jQuery (necessario per i plugin JavaScript di Bootstrap) -->
@@ -114,5 +147,20 @@
 
     <!-- Main JS File -->
     <script src="assets/js/main.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Ottieni la data di oggi
+        let today = new Date();
+        today.setDate(today.getDate());  // Imposta la data di oggi
+    
+        // Formatta la data come YYYY-MM-DD
+        let formattedDate = today.toISOString().split('T')[0];  // Es. 2025-01-28
+    
+        // Imposta la data di oggi come valore minimo nel campo data
+        document.getElementById("endDate").setAttribute("min", formattedDate);
+      });
+    </script>
+    
   </body>
 </html>
+

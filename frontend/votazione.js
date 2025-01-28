@@ -84,33 +84,6 @@ connectButton.addEventListener("click", async () => {
     }
 });
 
-window.addEventListener("DOMContentLoaded", async () => {
-    const storedAddress = localStorage.getItem("userAddress");
-    if (storedAddress) {
-        // Se l'indirizzo è già presente nel localStorage, connettiti automaticamente
-        const accounts = [storedAddress];
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
-
-        userAddress.textContent = `Il tuo account: ${storedAddress}`;
-        connectButton.style.display = "none"; // Nascondi il pulsante
-
-        // Ottieni l'indirizzo del contratto
-        contractAddress = await getContractAddress();
-        if (!contractAddress) {
-            alert("Contract address not found!");
-            return;
-        }
-
-        const contractABI = await getABI();
-        // Inizializza il contratto
-        electionContract = new ethers.Contract(contractAddress, contractABI, signer);
-
-        // Mostra i candidati e aggiorna il form
-        await loadCandidates();
-        await renderForm();
-    }
-});
 
 // Funzione per caricare i candidati
 async function loadCandidates() {
