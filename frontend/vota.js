@@ -1,22 +1,22 @@
 // Selezione degli elementi della pagina
 const connectButton = document.getElementById("connectButton");
-const userAddress = document.getElementById("userAddress");
-const electionForm = document.getElementById("electionForm");
-const electionFormContainer = document.getElementById("electionFormContainer");
+const candidateList = document.getElementById("candidateList");
+const candidatesSelect = document.getElementById("candidatesSelect");
 const initialSection = document.getElementById("initialSection");
 const testo = document.getElementById("testo");
+const sezioneRicerca = document.getElementById("sezioneRicerca");
+const errore = document.getElementById("errore");
+const electionDetails = document.getElementById("electionDetails");
 
-
-
-// Nascondi il form inizialmente
-
-
-electionFormContainer.style.display = "none";
+sezioneRicerca.style.display = "none";
+errore.style.display = "none";
 
 let provider;
 let signer;
 let electionContract;
 let contractAddress;
+
+
 
 // Funzione per ottenere l'ABI
 async function getABI() {
@@ -45,24 +45,22 @@ async function getContractAddress() {
     }
 }
 
+
 // Connetti a Metamask
 connectButton.addEventListener("click", async () => {
     if (typeof window.ethereum !== "undefined") {
         try {
-            // Nascondi subito initialSection e testo
-
-            // Richiesta di accesso a MetaMask
             const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-
+            
             provider = new ethers.providers.Web3Provider(window.ethereum);
             signer = provider.getSigner();
 
             const address = await signer.getAddress();
             localStorage.setItem("userAddress", address);
             //userAddress.textContent = `Il tuo account: ${address}`;
+            connectButton.style.display = "none";
 
-            // Mostra il form solo dopo che l'accesso è stato confermato
-            
+            //localStorage.setItem("userAddress", address);
 
             // Ottieni l'indirizzo del contratto
             contractAddress = await getContractAddress();
@@ -75,70 +73,79 @@ connectButton.addEventListener("click", async () => {
             // Inizializza il contratto
             electionContract = new ethers.Contract(contractAddress, contractABI, signer);
 
-            
             initialSection.style.display = "none";
             testo.style.display = "none";
-            connectButton.style.display = "none";
-       
-            electionFormContainer.style.display = "block";
+            sezioneRicerca.style.display = "block";
 
+            // Mostra i candidati e aggiorna il form
+            //await loadCandidates();
+            //await renderForm();
         } catch (error) {
             console.error("Error connecting to Metamask:", error);
-            // Gestisci l'errore nel caso l'utente non confermi o ci siano problemi
-            initialSection.style.display = "block";
-            testo.style.display = "block";
-            connectButton.style.display = "block";
-            electionFormContainer.style.display = "none";
-            alert("Errore nella connessione con MetaMask. Prova di nuovo.");
         }
     } else {
-        alert("MetaMask non è installato. Per favore, installa MetaMask.");
+        alert("Metamask not found. Please install Metamask.");
     }
 });
 
 
-
-
-// Funzione per creare una nuova elezione
-electionForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
+// Funzione per recuperare l'elezione in base al codice
+async function getElectionDetails() {
     try {
+        const electionCode = document.getElementById("electionCode").value;
+        if (!electionCode) {
+            alert("Per favore inserisci un codice di elezione.");
+            return;
+        }
 
         if (!electionContract) {
             console.error("Election contract is not initialized.");
             return;
         }
 
-        const electionCode = document.getElementById("electionCode").value;
-        const electionTitle =  document.getElementById("electionTitle").value;
-        const candidateNames = document.getElementById("candidateNames").value.split(","); // Assumiamo che i nomi siano separati da virgole
-        const electionDescription = document.getElementById("electionDescription").value;
-        const electionDate = document.getElementById("endDate").value;
+        // Chiamata al contratto per ottenere i dettagli dell'elezione
+        const election = await electionContract.getElectionByCode(electionCode);
 
-        const endDateTimestamp = new Date(electionDate).getTime() / 1000; // Dividi per 1000 per ottenere i secondi
+        if(election.title.trim() === ""){
+            electionDetails.style.display = "none";
+            document.getElementById("electionCode").value = "";
+            errore.style.display = "block";
+            return;
+        }
 
-
-        const tx = await electionContract.createElection(electionCode, candidateNames, electionTitle, electionDescription, endDateTimestamp);
-        document.getElementById("electionCode").value = "";
-        document.getElementById("candidateNames").value = "";
-        document.getElementById("electionTitle").value = "";
-        document.getElementById("electionDescription").value = "";
-        document.getElementById("endDate").value = "";
         
-        console.log("Creazione elezione inviata:", tx);
 
+        errore.style.display = "none";
+        document.getElementById("electionCode").value = "";
+        
+        // Visualizza i dettagli dell'elezione
+        document.getElementById("electionTitle").textContent = `Votazione: ${election.title}`;
+        document.getElementById("electionDescription").textContent = `Descrizione: ${election.description}`;
+        document.getElementById("electionEndDate").textContent = `Termine votazioni: ${new Date(election.endDate * 1000).toLocaleDateString()}`;
 
-        alert("Elezione creata con successo!");
+        // Popola la lista dei candidati
+        const candidateList = document.getElementById("candidateList");
+        candidateList.innerHTML = ""; // Svuota la lista dei candidati
 
-        await tx.wait(); // Aspetta che la transazione sia confermata
+        election.ecandidates.forEach(candidate => {
+            const li = document.createElement("tr");
+            li.innerHTML = `
+                <td>${candidate.id}</td>
+                <td>${candidate.name}</td>
+                <td>${candidate.voteCount}</td>
+            `;
+            candidateList.appendChild(li);
+        });
 
-
-
+        // Mostra i dettagli dell'elezione
+        document.getElementById("electionDetails").style.display = "block";
     } catch (error) {
-        console.error("Errore durante la creazione dell'elezione:", error);
+        console.error("Error retrieving election details:", error);
     }
-});
+}
+
+// Event listener per il pulsante
+document.getElementById("getElectionButton").addEventListener("click", getElectionDetails);
 
 
 let hasConnectButtonBeenClicked = sessionStorage.getItem("hasConnectButtonBeenClicked") === "true";
@@ -146,18 +153,29 @@ let hasConnectButtonBeenClicked = sessionStorage.getItem("hasConnectButtonBeenCl
 async function checkConnectionStatus() {
     const storedAddress = localStorage.getItem("userAddress");
 
-    // Se l'utente ha cliccato il pulsante, tentiamo la connessione
+    // Se ha cliccato il pulsante, tentiamo la connessione
     if (storedAddress && hasConnectButtonBeenClicked) {
         console.log("Utente già connesso, tentando di ricaricare il contratto...");
         await new Promise(resolve => setTimeout(resolve, 50));
         connectButton.click(); // Richiama la funzione per connettersi a Metamask
     }
 
+
     if (!electionContract) {
         console.warn("Election contract is not yet initialized. Attendere la connessione.");
         return; // Evita l'errore bloccante
     }
 
+    // Se l'utente è connesso, mostra la ricerca, altrimenti mostra il login
+    if (storedAddress) {
+        document.getElementById("initialSection").style.display = "none";
+        document.getElementById("testo").style.display = "none";
+        document.getElementById("sezioneRicerca").style.display = "block";
+    } else {
+        document.getElementById("initialSection").style.display = "block";
+        document.getElementById("testo").style.display = "block";
+        document.getElementById("sezioneRicerca").style.display = "none";
+    }
 }
 
 // Esegue la verifica solo dopo il caricamento della pagina
@@ -168,3 +186,5 @@ connectButton.addEventListener("click", () => {
     sessionStorage.setItem("hasConnectButtonBeenClicked", "true"); // Memorizza questo stato per la sessione
     console.log('Cliccato');
 });
+
+

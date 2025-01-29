@@ -36,6 +36,43 @@ contract Election{
         electionCodes.push(_electionCode);
     }    
 
+    // Funzione per ottenere le votazioni sulla blockchain
+    function getAllElection() public view returns (string[] memory){
+        return electionCodes;
+    }
+
+    // Funzione per ottenere i dettagli di un'elezione dato il codice dell'elezione
+    function getElectionByCode(string memory _electionCode) public view returns (
+                string memory title, 
+                string memory description, 
+                uint endDate, 
+                Candidate[] memory ecandidates
+            )
+    {
+        ElectionInfo storage election = elections[_electionCode];
+        title = election.title;
+        description = election.description;
+        endDate = election.endDate;
+
+        // Non si possono direttamente restituire i dati salvati nello storage, altrimenti avremmo potuto scrivere direttamente "candidates = election.ecandidates;"
+        // Quindi bisogna prima copiare i dati in un array in memoria e poi restituirlo
+        ecandidates = new Candidate[](election.ecandidatesCount);
+
+        // Copia i candidati nell'array da restituire
+        for (uint i = 0; i < election.ecandidatesCount; i++) {
+            ecandidates[i] = election.ecandidates[i];
+        }
+    } 
+            
+
+
+
+
+
+    // PARTE STATICA
+
+
+
     //il modificatore view indica che la funzione non puo modificare lo stato del contratto, puo solo leggere
     function getElectionCount() public view returns (uint){
         return electionCodes.length;
