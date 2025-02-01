@@ -141,6 +141,21 @@
 
             </div>
 
+            <form" id="votazione">
+                <div class="form-group mb-3 mt-4">
+                  <label for="candidatesSelect" class="mb-2 fw-bold">Seleziona un candidato</label>
+                  <select class="form-select" id="candidatesSelect">
+                    <option value="" disabled selected>Seleziona un candidato...</option>
+                    <!-- Aggiungi le opzioni dinamicamente -->
+                  </select>
+                </div>
+                <button type="button" onclick="handleVote()" class="btn btn-primary mt-2">
+                  Vota
+                </button>
+                <hr />
+            </form>
+            
+
         </div>
     </section>
 

@@ -5,6 +5,8 @@ const electionForm = document.getElementById("electionForm");
 const electionFormContainer = document.getElementById("electionFormContainer");
 const initialSection = document.getElementById("initialSection");
 const testo = document.getElementById("testo");
+const codiceElezione =  document.getElementById("electionCode");
+const messaggioCodice = document.getElementById("messaggioCodice");
 
 
 
@@ -12,6 +14,8 @@ const testo = document.getElementById("testo");
 
 
 electionFormContainer.style.display = "none";
+codiceElezione.style.display = "none";
+messaggioCodice.style.display = "none";
 
 let provider;
 let signer;
@@ -110,7 +114,6 @@ electionForm.addEventListener("submit", async (event) => {
             return;
         }
 
-        const electionCode = document.getElementById("electionCode").value;
         const electionTitle =  document.getElementById("electionTitle").value;
         const candidateNames = document.getElementById("candidateNames").value.split(","); // Assumiamo che i nomi siano separati da virgole
         const electionDescription = document.getElementById("electionDescription").value;
@@ -119,12 +122,27 @@ electionForm.addEventListener("submit", async (event) => {
         const endDateTimestamp = new Date(electionDate).getTime() / 1000; // Dividi per 1000 per ottenere i secondi
 
 
-        const tx = await electionContract.createElection(electionCode, candidateNames, electionTitle, electionDescription, endDateTimestamp);
-        document.getElementById("electionCode").value = "";
+        const tx = await electionContract.createElection(candidateNames, electionTitle, electionDescription, endDateTimestamp);
+        await tx.wait();
+
+        //Bisogna aspettare, altrimenti se getAllFunction viene chiamata subito dopo aver creato la votazione, quest'ultima
+        //ancora non risulta sulla blockchain e di conseguenza non la trova
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        const electionCode = await electionContract.getAllElection();
+        const lastElectionCode = electionCode[electionCode.length - 1];
+
+        console.log("Codice elezione ricevuto:", lastElectionCode);
+
+
         document.getElementById("candidateNames").value = "";
         document.getElementById("electionTitle").value = "";
         document.getElementById("electionDescription").value = "";
         document.getElementById("endDate").value = "";
+
+        codiceElezione.textContent = `${lastElectionCode}`;
+        messaggioCodice.style.display = "block";
+        codiceElezione.style.display = "block";
         
         console.log("Creazione elezione inviata:", tx);
 

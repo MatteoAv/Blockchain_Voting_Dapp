@@ -7,6 +7,7 @@ const testo = document.getElementById("testo");
 const sezioneRicerca = document.getElementById("sezioneRicerca");
 const errore = document.getElementById("errore");
 const electionDetails = document.getElementById("electionDetails");
+const voteForm = document.getElementById("votazione");
 
 sezioneRicerca.style.display = "none";
 errore.style.display = "none";
@@ -89,6 +90,10 @@ connectButton.addEventListener("click", async () => {
 });
 
 
+// Variabile globale per memorizzare l'ID dell'elezione
+let electionId;
+let candidatesCount;
+
 // Funzione per recuperare l'elezione in base al codice
 async function getElectionDetails() {
     try {
@@ -105,6 +110,7 @@ async function getElectionDetails() {
 
         // Chiamata al contratto per ottenere i dettagli dell'elezione
         const election = await electionContract.getElectionByCode(electionCode);
+        electionId = electionCode;
 
         if(election.title.trim() === ""){
             electionDetails.style.display = "none";
@@ -114,16 +120,108 @@ async function getElectionDetails() {
         }
 
         
-
         errore.style.display = "none";
         document.getElementById("electionCode").value = "";
+
+
         
         // Visualizza i dettagli dell'elezione
         document.getElementById("electionTitle").textContent = `Votazione: ${election.title}`;
         document.getElementById("electionDescription").textContent = `Descrizione: ${election.description}`;
         document.getElementById("electionEndDate").textContent = `Termine votazioni: ${new Date(election.endDate * 1000).toLocaleDateString()}`;
 
+
+        console.log("Codice votazione:",electionId);
+
+
         // Popola la lista dei candidati
+        const candidateList = document.getElementById("candidateList");
+        candidateList.innerHTML = ""; // Svuota la lista dei candidati
+        candidatesCount = election.ecandidates.length;
+    
+
+        election.ecandidates.forEach(candidate => {
+            const li = document.createElement("tr");
+            li.innerHTML = `
+                <td>${candidate.id}</td>
+                <td>${candidate.name}</td>
+                <td>${candidate.voteCount}</td>
+            `;
+            candidateList.appendChild(li);
+        });
+
+        renderOptions(election.ecandidates);
+
+        // Mostra i dettagli dell'elezione
+        document.getElementById("electionDetails").style.display = "block";
+    } catch (error) {
+        console.error("Error retrieving election details:", error);
+    }
+}
+
+function renderOptions(candidates) {
+    const candidatesSelect = document.getElementById("candidatesSelect");
+    candidatesSelect.innerHTML = ""; // Svuota le opzioni esistenti
+
+    // Aggiungi l'opzione di default
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    defaultOption.textContent = "Seleziona un candidato...";
+    candidatesSelect.appendChild(defaultOption);
+
+    // Aggiungi ogni candidato come opzione
+    candidates.forEach(candidate => {
+        const option = document.createElement("option");
+        option.value = candidate.id;
+        option.textContent = candidate.name;
+        candidatesSelect.appendChild(option);
+    });
+}
+
+
+async function handleVote() {
+    console.log("Submit event triggered");
+    try {
+        if (!electionContract) {
+            console.error("Election contract is not initialized.");
+            return;
+        }
+
+        const candidatesSelect = document.getElementById("candidatesSelect");
+        const candidateId = candidatesSelect.value;
+        const userAddress = await signer.getAddress();
+
+
+        // Invia il voto al contratto
+        console.log('Candidate ID:', candidateId);
+        console.log("Numero candidati:",candidatesCount);
+
+        const codice = electionId;
+
+        console.log("Codice:", codice);
+        const tx = await electionContract.connect(signer).vota(codice, candidateId);
+
+        console.log("Transaction sent:", tx);
+
+        alert("Votazione avvenuta con successo!");
+
+        // Aspetta la conferma della transazione
+        await tx.wait();
+
+        await updateCandidatesList();
+
+
+    } catch (error) {
+        console.error("Error casting vote:", error);
+    }
+}
+
+
+async function updateCandidatesList() {
+    try {
+        const election = await electionContract.getElectionByCode(electionId);
         const candidateList = document.getElementById("candidateList");
         candidateList.innerHTML = ""; // Svuota la lista dei candidati
 
@@ -137,12 +235,30 @@ async function getElectionDetails() {
             candidateList.appendChild(li);
         });
 
-        // Mostra i dettagli dell'elezione
-        document.getElementById("electionDetails").style.display = "block";
+        renderOptions(election.ecandidates); // Rende le opzioni dei candidati nella select
+
     } catch (error) {
-        console.error("Error retrieving election details:", error);
+        console.error("Error updating candidate list:", error);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Event listener per il pulsante
 document.getElementById("getElectionButton").addEventListener("click", getElectionDetails);

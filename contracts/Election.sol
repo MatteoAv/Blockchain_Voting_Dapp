@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.27;
 
-contract Election{
+contract Election {
 
-    struct Candidate{
+    struct Candidate {
         uint id;
         string name;
         uint voteCount;
@@ -13,7 +13,7 @@ contract Election{
         string eelectionCode;
         uint ecandidatesCount;
         Candidate[] ecandidates;  
-        mapping(address => bool) evoters;
+        mapping(address => bool) evoters;  // Mapping for voters inside the election context
         string description;
         string title;
         uint endDate;
@@ -22,17 +22,37 @@ contract Election{
     mapping(string => ElectionInfo) public elections;
     string[] public electionCodes;
 
+    function generateElectionCode() internal view returns (string memory) {
+        string memory charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        bytes memory randomBytes = abi.encodePacked(keccak256(abi.encodePacked(block.timestamp, msg.sender, electionCodes.length)));
+        
+        bytes memory code = new bytes(6);
+        for (uint i = 0; i < 6; i++) {
+            code[i] = bytes(charset)[uint8(randomBytes[i]) % bytes(charset).length];
+        }
+        
+        return string(code);
+    }
+
     // Funzione per creare una nuova votazione
-    function createElection(string memory _electionCode, string[] memory _candidateNames, string memory title, string memory description, uint endDate) public {
+    function createElection(string[] memory _candidateNames, string memory title, string memory description, uint endDate) public {
+
+        string memory _electionCode;
+        do {
+            _electionCode = generateElectionCode();
+        } while (bytes(elections[_electionCode].eelectionCode).length != 0); // Assicura unicità
+
         ElectionInfo storage newElection = elections[_electionCode];
         newElection.eelectionCode = _electionCode;
         newElection.title = title;
         newElection.description = description;
         newElection.endDate = endDate;
+
         for (uint i = 0; i < _candidateNames.length; i++) {
             newElection.ecandidatesCount++;
             newElection.ecandidates.push(Candidate(newElection.ecandidatesCount, _candidateNames[i], 0));
         }
+
         electionCodes.push(_electionCode);
     }    
 
@@ -43,78 +63,34 @@ contract Election{
 
     // Funzione per ottenere i dettagli di un'elezione dato il codice dell'elezione
     function getElectionByCode(string memory _electionCode) public view returns (
-                string memory title, 
-                string memory description, 
-                uint endDate, 
-                Candidate[] memory ecandidates
-            )
-    {
+        string memory title, 
+        string memory description, 
+        uint endDate, 
+        Candidate[] memory ecandidates
+    ) {
         ElectionInfo storage election = elections[_electionCode];
         title = election.title;
         description = election.description;
         endDate = election.endDate;
 
-        // Non si possono direttamente restituire i dati salvati nello storage, altrimenti avremmo potuto scrivere direttamente "candidates = election.ecandidates;"
-        // Quindi bisogna prima copiare i dati in un array in memoria e poi restituirlo
         ecandidates = new Candidate[](election.ecandidatesCount);
 
-        // Copia i candidati nell'array da restituire
         for (uint i = 0; i < election.ecandidatesCount; i++) {
             ecandidates[i] = election.ecandidates[i];
         }
     } 
-            
 
+    // Funzione per votare
+    function vota(string memory _electionCode, uint _candidateId) public {
+        ElectionInfo storage election = elections[_electionCode];
 
+        // Controlla che l'utente non abbia già votato in questa elezione
+        require(!election.evoters[msg.sender], "Hai gia' votato per questa elezione!");
 
+        // Controlla che il candidato selezionato sia valido per questa elezione
+        require(_candidateId > 0, "Candidato non valido!");
 
-
-    // PARTE STATICA
-
-
-
-    //il modificatore view indica che la funzione non puo modificare lo stato del contratto, puo solo leggere
-    function getElectionCount() public view returns (uint){
-        return electionCodes.length;
-    }
-    
-    //Il mapping tiene traccia degli utenti che hanno già votato, ad ogni indirizzo di un account associa un valore booleano
-    //Il valore booleano è settato di default a FALSE
-    mapping(address => bool) public voters;
-
-    //Il mapping tiene traccia dei candidati, ad ogni id associa un candidato univoco
-    mapping(uint => Candidate) public candidates;
-
-    //Numero dei candidati nel mapping
-    uint public candidatesCount;
-
-    //Constructor
-    constructor() {
-        addCandidate("Candidate 1");
-        addCandidate("Candidate 2");
-    }
-
-    //La funzione incrementa di 1 il numero di candidati nel mapping e aggiunge un nuovo candidato passando id(il contatore viene usato come id), nome e numero di voti
-    function addCandidate (string memory _name) private{
-        candidatesCount ++;
-        candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
-    }
-
-    /*
-      La funzione setta a true il valore del votante (per indicare che ha votato) ed incrementa di 1 
-      il contatore del candidato il cui id è stato passato come parametro.
-      La funzione deve essere pubblica, chiunque deve poter votare
-    */
-    function vote (uint _candidateId) public {
-
-        /* Con require se la condizione non è verificata la funzione si interrompe immediatamente */
-
-        //controlla che l'utente non abbia già votato
-        require(!voters[msg.sender]);
-        //controlla che il candidato selezionato sia un candidato valido
-        require(_candidateId > 0 && _candidateId <= candidatesCount);
-
-        voters[msg.sender] = true;
-        candidates[_candidateId].voteCount ++;        
+        election.evoters[msg.sender] = true;  // Segna che l'utente ha votato
+        election.ecandidates[_candidateId - 1].voteCount++;  // Incrementa il voto del candidato
     }
 }
