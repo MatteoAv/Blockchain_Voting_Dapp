@@ -88,9 +88,15 @@ contract Election {
         require(!election.evoters[msg.sender], "Hai gia' votato per questa elezione!");
 
         // Controlla che il candidato selezionato sia valido per questa elezione
-        require(_candidateId > 0, "Candidato non valido!");
+        require(_candidateId > 0 && _candidateId <= election.ecandidatesCount, "Candidato non valido!");
 
         election.evoters[msg.sender] = true;  // Segna che l'utente ha votato
         election.ecandidates[_candidateId - 1].voteCount++;  // Incrementa il voto del candidato
     }
+
+    // Funzione per verificare se un utente ha già votato in una specifica elezione
+    function hasVoted(string memory _electionCode, address _voter) public view returns (bool) {
+        return elections[_electionCode].evoters[_voter];
+    }
+    
 }

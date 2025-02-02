@@ -115,7 +115,35 @@ electionForm.addEventListener("submit", async (event) => {
         }
 
         const electionTitle =  document.getElementById("electionTitle").value;
-        const candidateNames = document.getElementById("candidateNames").value.split(","); // Assumiamo che i nomi siano separati da virgole
+
+        const candidateNames = [];
+        const candidateInputs = document.querySelectorAll("input[id^='candidate']");
+
+        console.log(candidateInputs);
+
+        candidateInputs.forEach(field => {
+            const candidateName = field.value.trim();
+            if (candidateName) {
+                candidateNames.push(candidateName); // Aggiungi il nome candidato all'array
+            }
+        });
+
+        //Un set non puo avere duplicati, controlla se il set creato ha la stessa lunghezza dell'array di partezza
+        const uniqueCandidateNames = new Set(candidateNames);
+        if (uniqueCandidateNames.size !== candidateNames.length) {
+            // Se le dimensioni sono diverse, ci sono duplicati
+            // Crea il div per l'alert
+            const successAlert = document.getElementById("AlertFail");
+
+            successAlert.style.display = "block";
+
+            setTimeout(() => {
+                successAlert.style.display = "none";
+            }, 2000);
+
+            return; 
+        }
+
         const electionDescription = document.getElementById("electionDescription").value;
         const electionDate = document.getElementById("endDate").value;
 
@@ -135,10 +163,17 @@ electionForm.addEventListener("submit", async (event) => {
         console.log("Codice elezione ricevuto:", lastElectionCode);
 
 
-        document.getElementById("candidateNames").value = "";
+
         document.getElementById("electionTitle").value = "";
         document.getElementById("electionDescription").value = "";
         document.getElementById("endDate").value = "";
+
+
+        const candidateFields = document.getElementById("candidateFields");
+        candidateFields.innerHTML = ''; // Rimuove tutti i campi candidati esistenti
+
+        document.getElementById("numCandidates").value = "";
+
 
         codiceElezione.textContent = `${lastElectionCode}`;
         messaggioCodice.style.display = "block";
@@ -146,12 +181,14 @@ electionForm.addEventListener("submit", async (event) => {
         
         console.log("Creazione elezione inviata:", tx);
 
+        // Crea il div per l'alert
+        const successAlert = document.getElementById("AlertSuccess");
 
-        alert("Elezione creata con successo!");
+        successAlert.style.display = "block";
 
-        await tx.wait(); // Aspetta che la transazione sia confermata
-
-
+        setTimeout(() => {
+            successAlert.style.display = "none";
+        }, 2000);
 
     } catch (error) {
         console.error("Errore durante la creazione dell'elezione:", error);

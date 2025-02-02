@@ -34,67 +34,157 @@
     <link href="assets/css/main.css" rel="stylesheet">
 
     <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-      }
+        #testo {
+            margin-top: -200px;  
+        }
+        #electionDetails {
+            margin-top: 200px;  
+            text-align: center;
+        }        
+        .table tbody {
+        background-color: transparent;
+        }
+        /* Intestazione tabella*/
+        .table thead th { 
+            color: #facc00;
+            background-color: transparent;
+        }
+        .table td {
+            color: #facc00;
+            background-color: transparent 
+        }
+        .table {
+            table-layout: fixed;
+        }
+        .alert {
+            position: fixed;
+            top: 10%;
+            text-align: center;
+            z-index: 1050;
+            width: 500px;
+            animation: fadeIn 0.5s forwards;
+        }
 
-      .container {
-        flex-grow: 1; /* Spinge il contenuto verso l'alto, lasciando il footer in basso */
-      }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }           
     </style>
 
 
   </head>
 
-  <body>
+  <body class="index-page">
 
     <div id="navbar-container"></div>
 
-    <div class="container" style="max-width: 650px; padding-top: 100px;">
-      <div class="row">
-        <div class="col-lg-12">
-          <h1 class="text-center">Election DApp</h1>
-          <hr/>
-          <br/>
-          <div id="content" style="display: none;">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">#ID</th>
-                  <th scope="col">Nome</th>
-                  <th scope="col">Voti</th>
-                </tr>
-              </thead>
-              <tbody id="candidateList">
-                <!-- Candidati saranno aggiunti dinamicamente qui -->
-              </tbody>
-            </table>
-          </div>
-          <div id="connectSection" class="d-flex justify-content-center">
-            <button id="connectButton" class="btn btn-primary btn-lg">Connettiti a Metamask</button>
-          </div>
 
-          <form onSubmit="App.castVote(); return false;">
-            <div class="form-group mb-3 mt-4">
-              <label for="candidatesSelect" class="mb-2 fw-bold">Seleziona un candidato</label>
-              <select class="form-select" id="candidatesSelect">
-                <option value="" disabled selected>Seleziona un candidato...</option>
-                <!-- Aggiungi le opzioni dinamicamente -->
-              </select>
+    <section class="hero section dark-background">
+        <img src="assets/img/image7.jpg" alt="" data-aos="fade-in">
+
+        <div id="AlertRicerca" class="alert alert-warning" style="width: 500px; display: none;">Per favore inserisci un codice per effettuare la ricerca</div>
+        <div id="AlertSuccess" class="alert alert-success" style="width: 500px; display: none;">Votazione avvenuta con successo</div>
+
+        <div class="container" >
+
+            <!-- Titolo -->
+            <div class="text-center" id="testo" data-aos="fade-up" data-aos-delay="100">
+                <h2 id="titolo">Accedi con <span>Metamask</span></h2>
+                <p>Per poter votare devi accedere con il tuo account Metamask</p>
             </div>
-            <button type="submit" class="btn btn-primary mt-2">
-              Vota
-            </button>
-            <hr />
-          </form>
+    
+            <!-- Contenitore con pulsante -->
+            <div id="initialSection" data-aos="fade-up" data-aos-delay="100">
+                <div id="connectSection" class="mt-4 mx-auto" style="width: 400px;">
+                    <div class="icon-box mx-auto">
+                        <a href="javascript:void(0)" id="connectButton" onclick="event.preventDefault();">
+                            <i class="bi bi-wallet"></i>
+                            <h3>Accedi</h3>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione ricerca votazione -->
+            <div id="sezioneRicerca" style="min-height: 500px;">
+                <div class="row justify-content-center">
+                        <div class="col-sm-6 col-md-4">
+                            <input type="text" id="electionCode" class="form-control"  placeholder="Codice votazione..." required>
+                        </div>    
+                        <div class="col-sm-auto">
+                            <button type="submit" class="btn btn-outline-warning" id="getElectionButton">Cerca</button>
+                        </div>          
+                </div>
+
+                <div id="electionDetails" style="display: none; margin-top: 100px;">
+                    <div class="container"  style="margin-bottom: 100px;">
+                        <div class="row">
+                            <div class="col-sm">
+                                <h4 id="electionTitle"></h4>
+                            </div>
+                            <div class="col-sm">
+                                <h4 id="electionEndDate"></h4>
+                            </div>
+                        </div>   
+                        <hr/>     
+                    </div>
+
+                    
+                    <div>
+                        <table class="table table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">ID Candidato</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Voti</th>
+                                </tr>
+                            </thead>
+                            <tbody id="candidateList">
+                                <!-- I dati saranno inseriti dinamicamente -->
+                            </tbody>
+                        </table>
+                        <p id="electionDescription"></p>   
+                    </div>
+                </div>
+
+
+                <div>
+                    <div class="text-center" id="errore" style="margin-top: 100px;">
+                        <h2 id="titolo">Codice non <span>valido</span></h2>
+                        <p>Non esiste alcuna votazione con questo codice...ritenta</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <h3 id="alreadyVoted" class="text-center mt-5">Hai già votato per queste elezioni</h3>
+            <h3 id="Expired" class="text-center mt-5">Non è più possibile votare per questa elezione, il periodo di votazione è terminato</h3>
+
+
+            <form" id="votazione" class="p-3">
+                <div class="form-group mb-3 mt-4 w-50 mx-auto">
+                  <label for="candidatesSelect" class="mb-2 fw-bold">Seleziona un candidato</label>
+                  <select class="form-select" id="candidatesSelect">
+                    <option value="" disabled selected>Scegli un'opzione...</option>
+                    <!-- Aggiungi le opzioni dinamicamente -->
+                  </select>
+                </div>
+                <div class="mt-4 w-50 mx-auto d-flex justify-content-center">
+                    <button type="button" onclick="handleVote()" class="btn btn-outline-warning">
+                        Vota
+                    </button>
+                </div>
+            </form>
+
+           
+            
+
         </div>
-        <p id="alreadyVoted" class="text-center fw-bold">Hai già votato per queste elezioni</p>
-        <p id="userAddress" class="text-center fw-bold"></p>
-      </div>
-    </div>
+    </section>
 
     <!-- Footer -->
     <div id="footer-container"></div>
@@ -105,7 +195,7 @@
           .then(data => document.getElementById('navbar-container').innerHTML = data);
       fetch('footer.html')
           .then(response => response.text())
-          .then(data => document.getElementById('footer-container').innerHTML = data);                  
+          .then(data => document.getElementById('footer-container').innerHTML = data);     
   </script>
 
     <!-- jQuery (necessario per i plugin JavaScript di Bootstrap) -->
