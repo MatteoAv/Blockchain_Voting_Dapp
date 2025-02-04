@@ -228,10 +228,11 @@ async function handleVote() {
         console.log('Candidate ID:', candidateId);
         console.log("Numero candidati:",candidatesCount);
 
+        const electionFee = ethers.utils.parseEther("0.05"); // 0.1 ETH
         const codice = electionId;
 
         console.log("Codice:", codice);
-        const tx = await electionContract.connect(signer).vota(codice, candidateId);
+        const tx = await electionContract.connect(signer).vota(codice, candidateId, {value: electionFee});
 
         console.log("Transaction sent:", tx);
 
@@ -291,7 +292,6 @@ async function updateVoteForm(){
     } 
     else if(electionDate < new Date()){
         console.log("La data della votazione è passata.");
-        // Puoi aggiungere ulteriori logiche qui, ad esempio nascondere il form o simili.
         alreadyVoted.style.display = "none";
         voteForm.style.display = "none";
     }

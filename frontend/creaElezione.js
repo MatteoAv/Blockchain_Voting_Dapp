@@ -115,7 +115,6 @@ electionForm.addEventListener("submit", async (event) => {
         }
 
         const electionTitle =  document.getElementById("electionTitle").value;
-
         const candidateNames = [];
         const candidateInputs = document.querySelectorAll("input[id^='candidate']");
 
@@ -146,16 +145,20 @@ electionForm.addEventListener("submit", async (event) => {
 
         const electionDescription = document.getElementById("electionDescription").value;
         const electionDate = document.getElementById("endDate").value;
-
         const endDateTimestamp = new Date(electionDate).getTime() / 1000; // Dividi per 1000 per ottenere i secondi
 
+        const electionFee = ethers.utils.parseEther("0.1"); // 0.1 ETH
 
-        const tx = await electionContract.createElection(candidateNames, electionTitle, electionDescription, endDateTimestamp);
+
+        const tx = await electionContract.createElection(candidateNames, electionTitle, electionDescription, endDateTimestamp, {value: electionFee});
         await tx.wait();
 
         //Bisogna aspettare, altrimenti se getAllFunction viene chiamata subito dopo aver creato la votazione, quest'ultima
         //ancora non risulta sulla blockchain e di conseguenza non la trova
+
+
         await new Promise(resolve => setTimeout(resolve, 100));
+
 
         const electionCode = await electionContract.getAllElection();
         const lastElectionCode = electionCode[electionCode.length - 1];

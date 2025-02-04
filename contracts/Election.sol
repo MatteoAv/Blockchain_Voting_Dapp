@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.27;
 
+
 contract Election {
 
     struct Candidate {
@@ -17,7 +18,10 @@ contract Election {
         string description;
         string title;
         uint endDate;
+        address creator;
     }    
+
+    bool public electionCancelled = false;
 
     mapping(string => ElectionInfo) public elections;
     string[] public electionCodes;
@@ -35,7 +39,7 @@ contract Election {
     }
 
     // Funzione per creare una nuova votazione
-    function createElection(string[] memory _candidateNames, string memory title, string memory description, uint endDate) public {
+    function createElection(string[] memory _candidateNames, string memory title, string memory description, uint endDate) public payable{
 
         string memory _electionCode;
         do {
@@ -47,6 +51,10 @@ contract Election {
         newElection.title = title;
         newElection.description = description;
         newElection.endDate = endDate;
+        newElection.creator = msg.sender;
+
+        // Aggiungi il controllo per verificare se l'utente ha inviato abbastanza fondi
+        require(msg.value >= 0.1 ether, "Devi inviare almeno 0.1 ETH per creare l'elezione!");
 
         for (uint i = 0; i < _candidateNames.length; i++) {
             newElection.ecandidatesCount++;
@@ -81,7 +89,7 @@ contract Election {
     } 
 
     // Funzione per votare
-    function vota(string memory _electionCode, uint _candidateId) public {
+    function vota(string memory _electionCode, uint _candidateId) public payable{
         ElectionInfo storage election = elections[_electionCode];
 
         // Controlla che l'utente non abbia già votato in questa elezione
@@ -89,6 +97,11 @@ contract Election {
 
         // Controlla che il candidato selezionato sia valido per questa elezione
         require(_candidateId > 0 && _candidateId <= election.ecandidatesCount, "Candidato non valido!");
+
+        // Affinche la votazione possa avvenire e' necessario che la data di terminazione della votazione non sia ancora passata
+        require(block.timestamp <= election.endDate, "La votazione e' gia' terminata!");
+
+        require(msg.value >= 0.05 ether, "Devi inviare almeno 0.05 ETH per votare!");
 
         election.evoters[msg.sender] = true;  // Segna che l'utente ha votato
         election.ecandidates[_candidateId - 1].voteCount++;  // Incrementa il voto del candidato
@@ -98,5 +111,27 @@ contract Election {
     function hasVoted(string memory _electionCode, address _voter) public view returns (bool) {
         return elections[_electionCode].evoters[_voter];
     }
+
+    // Funzione per cancellare l'elezione
+    function deleteElection(string memory _electionCode) public {
+        ElectionInfo storage election = elections[_electionCode];
+        
+        // Verifica che solo il creatore dell'elezione possa annullarla
+        require(msg.sender == election.creator, "Solo il creatore puo' annullare l'elezione.");
+        
+        // Verifica che l'elezione sia scaduta
+        require(block.timestamp > election.endDate, "L'elezione non e' ancora scaduta.");
+        
+        // Verifica che non siano stati emessi voti
+        for (uint i = 0; i < election.ecandidatesCount; i++) {
+            require(election.ecandidates[i].voteCount == 0, "Non puoi annullare l'elezione, ci sono gia' dei voti.");
+        }
+
+        electionCancelled = true;
+        
+        // Restituisci i fondi al creatore
+        payable(election.creator).transfer(address(this).balance);
+    }
+
     
 }
