@@ -10,19 +10,24 @@ const electionDetails = document.getElementById("electionDetails");
 const voteForm = document.getElementById("votazione");
 const alreadyVoted  = document.getElementById("alreadyVoted");
 const scaduta = document.getElementById("Expired");
+const elimina = document.getElementById("Elimina");
 
 scaduta.style.display = "none";
 sezioneRicerca.style.display = "none";
 errore.style.display = "none";
 voteForm.style.display = "none";
 alreadyVoted.style.display = "none";
+elimina.style.display = "none";
 
 let provider;
 let signer;
 let electionContract;
 let contractAddress;
 
-
+// Variabile globale per memorizzare l'ID dell'elezione
+let electionId;
+let candidatesCount;
+let electionDate;
 
 // Funzione per ottenere l'ABI
 async function getABI() {
@@ -95,11 +100,6 @@ connectButton.addEventListener("click", async () => {
 });
 
 
-// Variabile globale per memorizzare l'ID dell'elezione
-let electionId;
-let candidatesCount;
-let electionDate;
-
 // Funzione per recuperare l'elezione in base al codice
 async function getElectionDetails() {
     try {
@@ -120,9 +120,23 @@ async function getElectionDetails() {
             return;
         }
 
+
+        electionId = electionCode;
+
+        const cancellato = await electionContract.isCancelled(electionCode);
+
+        console.log(cancellato);
+
+        
+        if(cancellato == true){
+            errore.style.display = "block";
+            return;
+        }
+
         // Chiamata al contratto per ottenere i dettagli dell'elezione
         const election = await electionContract.getElectionByCode(electionCode);
-        electionId = electionCode;
+
+    
 
         if(election.title.trim() === ""){
             electionDetails.style.display = "none";
@@ -165,22 +179,29 @@ async function getElectionDetails() {
 
         const userAddress = await signer.getAddress();
         const hasVoted = await electionContract.hasVoted(electionId, userAddress);
-
+        const votiTotali = await electionContract.getTotalVotes(electionId);
+        const creatore = await electionContract.getCreatorOfElection(electionId);
+    
+        console.log("Numero totale dei voti:", votiTotali);
+    
         if(hasVoted){
             alreadyVoted.style.display = "block";
             voteForm.style.display = "none";
-            scaduta.style.display = "none";
+            elimina.style.display = "none";
         } 
         else if(electionDate < new Date()){
+            console.log("La data della votazione è passata.");
             alreadyVoted.style.display = "none";
             voteForm.style.display = "none";
-            scaduta.style.display = "block";
+            if(votiTotali == 0 && creatore.toLowerCase() === userAddress.toLowerCase()){
+                elimina.style.display = "block";
+            }
         }
         else {
             renderOptions(election.ecandidates);
             voteForm.style.display = "block";
             alreadyVoted.style.display = "none";
-            scaduta.style.display = "none";
+            elimina.style.display = "none";
         }
 
 
@@ -244,11 +265,16 @@ async function handleVote() {
             successAlert.style.display = "none";
         }, 2000);
 
+        
         // Aspetta la conferma della transazione
         await tx.wait();
 
+        
         await updateCandidatesList();
+
         await updateVoteForm();
+
+  
 
 
     } catch (error) {
@@ -284,22 +310,31 @@ async function updateCandidatesList() {
 async function updateVoteForm(){
     const userAddress = await signer.getAddress();
     const hasVoted = await electionContract.hasVoted(electionId, userAddress);
+    const votiTotali = await electionContract.getTotalVotes(electionId);
+    const creatore = await electionContract.getCreatorOfElection(electionId);
 
+    console.log("Numero totale dei voti:", votiTotali);
 
     if(hasVoted){
         alreadyVoted.style.display = "block";
         voteForm.style.display = "none";
+        elimina.style.display = "none";
     } 
     else if(electionDate < new Date()){
         console.log("La data della votazione è passata.");
         alreadyVoted.style.display = "none";
         voteForm.style.display = "none";
+        if(votiTotali == 0 && creatore.toLowerCase() === userAddress.toLowerCase()){
+            elimina.style.display = "block";
+        }
     }
     else {
         renderOptions(election.ecandidates);
         voteForm.style.display = "block";
         alreadyVoted.style.display = "none";
+        elimina.style.display = "none";
     }
+
 }
 
 
@@ -338,13 +373,38 @@ async function checkConnectionStatus() {
     }
 }
 
-// Esegue la verifica solo dopo il caricamento della pagina
-window.addEventListener("load", checkConnectionStatus);
+    // Esegue la verifica solo dopo il caricamento della pagina
+    window.addEventListener("load", checkConnectionStatus);
 
-connectButton.addEventListener("click", () => {
-    hasConnectButtonBeenClicked = true; // Imposta il flag a true quando il pulsante viene cliccato
-    sessionStorage.setItem("hasConnectButtonBeenClicked", "true"); // Memorizza questo stato per la sessione
-    console.log('Cliccato');
-});
+    connectButton.addEventListener("click", () => {
+        hasConnectButtonBeenClicked = true; // Imposta il flag a true quando il pulsante viene cliccato
+        sessionStorage.setItem("hasConnectButtonBeenClicked", "true"); // Memorizza questo stato per la sessione
+        console.log('Cliccato');
+    });
 
+
+    // Funzione per chiamare la funzione deleteElection
+    async function deleteElection() {
+        const electionCode = electionId;
+
+        console.log(electionCode);
+
+        if (!electionCode) {
+            alert("Codice elezione non fornito!");
+            return;
+        }
+
+        try {
+            const tx = await electionContract.deleteElection(electionCode);
+
+            console.log("Transazione inviata:", tx);
+            await tx.wait(); // Aspetta che la transazione venga confermata
+            alert("Elezione eliminata con successo!");
+
+            location.reload();
+        } catch (error) {
+            console.error("Errore:", error);
+            alert("Errore durante la cancellazione dell'elezione. Assicurati di essere il creatore dell'elezione e che sia scaduta.");
+        }
+    }
 

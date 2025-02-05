@@ -19,12 +19,13 @@ contract Election {
         string title;
         uint endDate;
         address creator;
+        bool electionCancelled;
+        uint creationCost;
     }    
-
-    bool public electionCancelled = false;
 
     mapping(string => ElectionInfo) public elections;
     string[] public electionCodes;
+    
 
     function generateElectionCode() internal view returns (string memory) {
         string memory charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -52,9 +53,12 @@ contract Election {
         newElection.description = description;
         newElection.endDate = endDate;
         newElection.creator = msg.sender;
+        newElection.electionCancelled = false;
 
         // Aggiungi il controllo per verificare se l'utente ha inviato abbastanza fondi
         require(msg.value >= 0.1 ether, "Devi inviare almeno 0.1 ETH per creare l'elezione!");
+
+        newElection.creationCost = msg.value;
 
         for (uint i = 0; i < _candidateNames.length; i++) {
             newElection.ecandidatesCount++;
@@ -69,6 +73,14 @@ contract Election {
         return electionCodes;
     }
 
+    function isCancelled(string memory electionCode) public view returns (bool) {
+        return elections[electionCode].electionCancelled;
+    }
+
+    function getCreatorOfElection(string memory _electionCode) public view returns (address) {
+        return elections[_electionCode].creator;
+    }
+
     // Funzione per ottenere i dettagli di un'elezione dato il codice dell'elezione
     function getElectionByCode(string memory _electionCode) public view returns (
         string memory title, 
@@ -76,6 +88,9 @@ contract Election {
         uint endDate, 
         Candidate[] memory ecandidates
     ) {
+
+        require(elections[_electionCode].electionCancelled == false, "La votazione e' stata eliminata e non risulta piu' visibile!");
+
         ElectionInfo storage election = elections[_electionCode];
         title = election.title;
         description = election.description;
@@ -100,6 +115,8 @@ contract Election {
 
         // Affinche la votazione possa avvenire e' necessario che la data di terminazione della votazione non sia ancora passata
         require(block.timestamp <= election.endDate, "La votazione e' gia' terminata!");
+
+        require(elections[_electionCode].electionCancelled == false, "La votazione e' stata eliminata e non risulta piu' visibile!");
 
         require(msg.value >= 0.05 ether, "Devi inviare almeno 0.05 ETH per votare!");
 
@@ -127,11 +144,25 @@ contract Election {
             require(election.ecandidates[i].voteCount == 0, "Non puoi annullare l'elezione, ci sono gia' dei voti.");
         }
 
-        electionCancelled = true;
+        elections[_electionCode].electionCancelled = true;
         
         // Restituisci i fondi al creatore
-        payable(election.creator).transfer(address(this).balance);
+        uint refundAmount = election.creationCost;
+        payable(election.creator).transfer(refundAmount);
     }
+
+    // Funzione per ottenere il numero totale di voti in una elezione
+    function getTotalVotes(string memory _electionCode) public view returns (uint totalVotes) {
+        ElectionInfo storage election = elections[_electionCode];
+        totalVotes = 0;
+
+        // Somma i voti per ogni candidato
+        for (uint i = 0; i < election.ecandidatesCount; i++) {
+            totalVotes += election.ecandidates[i].voteCount;
+        }
+
+        return totalVotes;
+    }    
 
     
 }

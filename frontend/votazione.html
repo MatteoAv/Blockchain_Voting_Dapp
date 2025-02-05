@@ -164,7 +164,7 @@
             <h3 id="alreadyVoted" class="text-center mt-5">Hai già votato per queste elezioni</h3>
             <h3 id="Expired" class="text-center mt-5">Non è più possibile votare per questa elezione, il periodo di votazione è terminato</h3>
 
-
+            <div>
             <form" id="votazione" class="p-3">
                 <div class="form-group mb-3 mt-4 w-50 mx-auto">
                   <label for="candidatesSelect" class="mb-2 fw-bold">Seleziona un candidato</label>
@@ -179,12 +179,21 @@
                     </button>
                 </div>
             </form>
+            </div>
 
-           
-            
+            <div class="mt-4 w-50 mx-auto d-flex justify-content-center">
+                <button type="button" onclick="deleteElection()" class="btn btn-outline-warning" id="Elimina">
+                    Elimina
+                </button>
+            </div>
+
+
 
         </div>
+
     </section>
+
+
 
     <!-- Footer -->
     <div id="footer-container"></div>
