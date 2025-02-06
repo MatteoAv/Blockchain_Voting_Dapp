@@ -88,6 +88,8 @@
 
         <div id="AlertRicerca" class="alert alert-warning" style="width: 500px; display: none;">Per favore inserisci un codice per effettuare la ricerca</div>
         <div id="AlertSuccess" class="alert alert-success" style="width: 500px; display: none;">Votazione avvenuta con successo</div>
+        <div id="AlertDeleteSuccess" class="alert alert-success" style="width: 500px; display: none;">Votazione eliminata con successo</div>
+        <div id="AlertDeleteFailed" class="alert alert-success" style="width: 500px; display: none;">Errore durante la cancellazione dell'elezione. Assicurati di essere il creatore dell'elezione, che sia scaduta e che non ci siano voti</div>
 
         <div class="container" >
 
@@ -163,6 +165,7 @@
 
             <h3 id="alreadyVoted" class="text-center mt-5">Hai già votato per queste elezioni</h3>
             <h3 id="Expired" class="text-center mt-5">Non è più possibile votare per questa elezione, il periodo di votazione è terminato</h3>
+            <h3 id="creatoreElezione" class="text-center mt-5">Il creatore di un'elezione non puo' votare per essa</h3>
 
             <div>
             <form" id="votazione" class="p-3">
@@ -174,7 +177,7 @@
                   </select>
                 </div>
                 <div class="mt-4 w-50 mx-auto d-flex justify-content-center">
-                    <button type="button" onclick="handleVote()" class="btn btn-outline-warning">
+                    <button id="voteButton" type="button" onclick="handleVote()" class="btn btn-outline-warning">
                         Vota
                     </button>
                 </div>

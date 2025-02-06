@@ -107,6 +107,9 @@ contract Election {
     function vota(string memory _electionCode, uint _candidateId) public payable{
         ElectionInfo storage election = elections[_electionCode];
 
+        // Controlla che chi vota non sia il creatore dell'elezione
+        require(msg.sender != election.creator, "Il creatore dell'elezione non puo votare!");
+
         // Controlla che l'utente non abbia già votato in questa elezione
         require(!election.evoters[msg.sender], "Hai gia' votato per questa elezione!");
 

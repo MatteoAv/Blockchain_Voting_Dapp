@@ -11,6 +11,8 @@ const voteForm = document.getElementById("votazione");
 const alreadyVoted  = document.getElementById("alreadyVoted");
 const scaduta = document.getElementById("Expired");
 const elimina = document.getElementById("Elimina");
+const creatoreElezione = document.getElementById("creatoreElezione");
+const voteButton = document.getElementById("voteButton");
 
 scaduta.style.display = "none";
 sezioneRicerca.style.display = "none";
@@ -18,6 +20,8 @@ errore.style.display = "none";
 voteForm.style.display = "none";
 alreadyVoted.style.display = "none";
 elimina.style.display = "none";
+creatoreElezione.style.display = "none";
+voteButton.disabled = true;
 
 let provider;
 let signer;
@@ -55,7 +59,6 @@ async function getContractAddress() {
         console.error("Error fetching contract address:", error);
     }
 }
-
 
 // Connetti a Metamask
 connectButton.addEventListener("click", async () => {
@@ -99,7 +102,6 @@ connectButton.addEventListener("click", async () => {
     }
 });
 
-
 // Funzione per recuperare l'elezione in base al codice
 async function getElectionDetails() {
     try {
@@ -119,12 +121,11 @@ async function getElectionDetails() {
             console.error("Election contract is not initialized.");
             return;
         }
+        
 
 
         electionId = electionCode;
-
         const cancellato = await electionContract.isCancelled(electionCode);
-
         console.log(cancellato);
 
         
@@ -177,22 +178,38 @@ async function getElectionDetails() {
             candidateList.appendChild(li);
         });
 
+        
+
         const userAddress = await signer.getAddress();
         const hasVoted = await electionContract.hasVoted(electionId, userAddress);
         const votiTotali = await electionContract.getTotalVotes(electionId);
         const creatore = await electionContract.getCreatorOfElection(electionId);
+
+        console.log("Numero totale dei voti:", votiTotali.toString());
+
+        if(creatore.toLowerCase() === userAddress.toLowerCase()){
+            document.getElementById("electionDetails").style.display = "block";
+            alreadyVoted.style.display = "none";
+            voteForm.style.display = "none";
+            creatoreElezione.style.display = "block";
+            if(electionDate < new Date() && votiTotali == 0){
+                elimina.style.display = "block";
+            }
+            return;
+        }
     
-        console.log("Numero totale dei voti:", votiTotali);
     
         if(hasVoted){
             alreadyVoted.style.display = "block";
             voteForm.style.display = "none";
             elimina.style.display = "none";
+            creatoreElezione.style.display = "none";
         } 
         else if(electionDate < new Date()){
             console.log("La data della votazione è passata.");
             alreadyVoted.style.display = "none";
             voteForm.style.display = "none";
+            creatoreElezione.style.display = "none";
             if(votiTotali == 0 && creatore.toLowerCase() === userAddress.toLowerCase()){
                 elimina.style.display = "block";
             }
@@ -202,6 +219,7 @@ async function getElectionDetails() {
             voteForm.style.display = "block";
             alreadyVoted.style.display = "none";
             elimina.style.display = "none";
+            creatoreElezione.style.display = "none";
         }
 
 
@@ -212,10 +230,17 @@ async function getElectionDetails() {
     }
 }
 
+// Aggiungi l'event listener per abilitare il pulsante solo quando viene selezionato un candidato
+candidatesSelect.addEventListener("change", function() {
+    voteButton.disabled = !candidatesSelect.value;
+});
+
+//Carica i candidati nel form
 function renderOptions(candidates) {
     const candidatesSelect = document.getElementById("candidatesSelect");
     candidatesSelect.innerHTML = ""; // Svuota le opzioni esistenti
 
+    
     // Aggiungi l'opzione di default
     const defaultOption = document.createElement("option");
     defaultOption.value = "";
@@ -245,6 +270,7 @@ async function handleVote() {
         const candidatesSelect = document.getElementById("candidatesSelect");
         const candidateId = candidatesSelect.value;
 
+        
         // Invia il voto al contratto
         console.log('Candidate ID:', candidateId);
         console.log("Numero candidati:",candidatesCount);
@@ -319,6 +345,7 @@ async function updateVoteForm(){
         alreadyVoted.style.display = "block";
         voteForm.style.display = "none";
         elimina.style.display = "none";
+        creatoreElezione.style.display = "none";
     } 
     else if(electionDate < new Date()){
         console.log("La data della votazione è passata.");
@@ -399,12 +426,28 @@ async function checkConnectionStatus() {
 
             console.log("Transazione inviata:", tx);
             await tx.wait(); // Aspetta che la transazione venga confermata
-            alert("Elezione eliminata con successo!");
+            const deleteAlert = document.getElementById("AlertDeleteSuccess");
 
+            deleteAlert.style.display = "block";
+    
+            setTimeout(() => {
+                deleteAlert.style.display = "none";
+            }, 1500);
+            
             location.reload();
+
         } catch (error) {
             console.error("Errore:", error);
-            alert("Errore durante la cancellazione dell'elezione. Assicurati di essere il creatore dell'elezione e che sia scaduta.");
+            const deleteAlert = document.getElementById("AlertDeleteFailed");
+
+            deleteAlert.style.display = "block";
+    
+            setTimeout(() => {
+                deleteAlert.style.display = "none";
+            }, 1500);
+            
+            location.reload();
         }
     }
+
 
