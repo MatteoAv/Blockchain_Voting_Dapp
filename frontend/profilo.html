@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FairVote</title>
+
+    <!-- Logica della votazione -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script defer src="profilo.js"></script>
+    
+
+    
+
+    <!-- Favicons -->
+    <link href="assets/img/letter-f.png" rel="icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/glightbox@3.1.0/dist/css/glightbox.min.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet">
+
+    <style>
+        #testo {
+            margin-top: -200px;  
+        }
+        .section {
+            background-color: transparent !important;
+        }
+
+    </style>
+
+
+  </head>
+
+  <body class="index-page">
+
+    <div id="navbar-container"></div>
+
+
+    <section class="hero section dark-background">
+        <img src="assets/img/image4.jpg" alt="" data-aos="fade-in">
+
+        <div id="AlertDeleteSuccess" class="alert alert-success" style="width: 500px; display: none;">Votazione eliminata con successo</div>
+        <div id="AlertDeleteFailed" class="alert alert-danger" style="width: 500px; display: none;">Errore durante la cancellazione dell'elezione. Assicurati di essere il creatore dell'elezione, che sia scaduta e che non ci siano voti</div>
+
+        <div class="container" >
+
+            <!-- Titolo -->
+            <div class="text-center" id="testo" data-aos="fade-up" data-aos-delay="100">
+                <h2 id="titolo">Accedi con <span>Metamask</span></h2>
+                <p>Per visualizzare il tuo profilo devi accedere con il tuo account Metamask</p>
+            </div>
+    
+            <!-- Contenitore con pulsante -->
+            <div id="initialSection" data-aos="fade-up" data-aos-delay="100">
+                <div id="connectSection" class="mt-4 mx-auto" style="width: 400px;">
+                    <div class="icon-box mx-auto">
+                        <a href="javascript:void(0)" id="connectButton" onclick="event.preventDefault();">
+                            <i class="bi bi-wallet"></i>
+                            <h3>Accedi</h3>
+                        </a>
+                    </div>
+                </div>
+            </div>
+ 
+
+            <div id="pagina">
+
+                <section class="section" aria-labelledby="titleEx1" id="generale">
+                    <div class="section-content">
+                    <div class="container">
+                        <div class="row mb-3">
+                        <div class="text-center">
+                            <h2 id="titleEx1">Gestisci le tue <span>votazioni</span></h2>
+                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="text-center">
+                                In questa sezione puoi visualizzare le informazioni principali riguardo le votazioni che hai creato e <br> decidere se eliminare o meno le votazioni obsolete per cui non sono 
+                                stati inviati voti.
+                            </div>
+
+                            
+                        </div>
+                    </div>
+                    </div>
+                </section>
+
+
+                <div id="vuoto">
+                    <div>
+                        <div class="text-center" style="margin-top: -100px;">
+                            <h2 id="titolo2">Nessuna elezione <span>trovata</span></h2>
+                            <p>Sembra che tu non abbia ancora creato nessuna elezione...comincia subito</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 w-50 mx-auto d-flex justify-content-center">
+                        <button id="voteButton" type="button" onclick="redirectToCreateElection()" class="btn btn-outline-warning">
+                            Crea
+                        </button>
+                    </div>
+                </div>
+
+
+                <template id="cardTemplate">
+                    <div class="card text-center mb-5" style="background-color: rgba(255, 255, 255, 0.7);">
+                        <div class="card-header"></div>
+                        <div class="card-body">
+                            <p class="card-title" style="color: black;"></p>
+                            <h5 class="card-text" style="color: black;"></h5>
+                            <a href="#" type="button" id="elimina" onclick="deleteElection()" class="btn btn-warning">Elimina</a>
+                        </div>
+                        <div class="card-footer text-body-secondary"></div>
+                    </div>
+                </template>
+                
+                
+                <!-- Container dove inserire le card -->
+                <div id="userElections" class="container my-4">
+                <!-- Le card verranno inserite qui -->
+                </div>
+
+            </div>
+              
+
+  
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script>
+      fetch('header.html')
+          .then(response => response.text())
+          .then(data => document.getElementById('navbar-container').innerHTML = data);
+      fetch('footer.html')
+          .then(response => response.text())
+          .then(data => document.getElementById('footer-container').innerHTML = data);    
+    function redirectToCreateElection() {
+        window.location.href = "creaElezione.html";
+    }           
+  </script>
+
+    <!-- jQuery (necessario per i plugin JavaScript di Bootstrap) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include Bootstrap JS -->
+
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Main JS File -->
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

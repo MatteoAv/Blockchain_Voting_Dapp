@@ -67,7 +67,7 @@
     <div id="navbar-container"></div>
 
     <section class="hero section dark-background">
-      <img src="assets/img/image4.jpg" alt="" data-aos="fade-in">
+      <img src="assets/img/image8.jpg" alt="" data-aos="fade-in">
 
       <div id="AlertFail" class="alert alert-danger" style="width: 500px; display: none;">Non sono ammessi piu candidati con lo stesso nome, riprova</div>
       <div id="AlertSuccess" class="alert alert-success" style="width: 500px; display: none;">Elezione creata con successo!</div>
@@ -193,21 +193,22 @@
     <!-- Main JS File -->
     <script src="assets/js/main.js"></script>
     
-  <!--
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // Ottieni la data di oggi
         let today = new Date();
-        today.setDate(today.getDate());  // Imposta la data di oggi
-    
+        today.setDate(today.getDate() + 1);  // Imposta la data di domani
+        
         // Formatta la data come YYYY-MM-DD
         let formattedDate = today.toISOString().split('T')[0];  // Es. 2025-01-28
-    
-        // Imposta la data di oggi come valore minimo nel campo data
+        
+        // Imposta la data di domani come valore minimo nel campo data
         document.getElementById("endDate").setAttribute("min", formattedDate);
       });
     </script>
-     -->
+    
+
     
   </body>
 </html>

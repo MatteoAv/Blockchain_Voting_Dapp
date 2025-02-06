@@ -81,6 +81,39 @@ contract Election {
         return elections[_electionCode].creator;
     }
 
+    function getElectionsByCreator(address _creator) public view returns (
+        string[] memory titles,
+        string[] memory descriptions,
+        uint[] memory endDates,
+        string[] memory codes
+    ) {
+        uint count = 0;
+
+        // Conta quante elezioni sono state create dall'utente
+        for (uint i = 0; i < electionCodes.length; i++) {
+            if (elections[electionCodes[i]].creator == _creator && !elections[electionCodes[i]].electionCancelled) {
+                count++;
+            }
+        }
+
+        // Inizializza gli array di output con la dimensione corretta
+        titles = new string[](count);
+        descriptions = new string[](count);
+        endDates = new uint[](count);
+        codes = new string[](count);
+
+        uint index = 0;
+        for (uint i = 0; i < electionCodes.length; i++) {
+            if (elections[electionCodes[i]].creator == _creator && !elections[electionCodes[i]].electionCancelled) {
+                titles[index] = elections[electionCodes[i]].title;
+                descriptions[index] = elections[electionCodes[i]].description;
+                endDates[index] = elections[electionCodes[i]].endDate;
+                codes[index] = electionCodes[i];
+                index++;
+            }
+        }
+    }    
+
     // Funzione per ottenere i dettagli di un'elezione dato il codice dell'elezione
     function getElectionByCode(string memory _electionCode) public view returns (
         string memory title, 
