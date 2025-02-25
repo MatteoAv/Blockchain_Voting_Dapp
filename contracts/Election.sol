@@ -14,7 +14,7 @@ contract Election {
         string eelectionCode;
         uint ecandidatesCount;
         Candidate[] ecandidates;  
-        mapping(address => bool) evoters;  // Mapping for voters inside the election context
+        mapping(address => bool) evoters;  // Mapping per tenere traccia degli utenti che hanno votato, ad ogni indirizzo è associato un bool (true=ha già votato, false=non ha votato)
         string description;
         string title;
         uint endDate;
@@ -23,7 +23,7 @@ contract Election {
         uint creationCost;
     }    
 
-    mapping(string => ElectionInfo) public elections;
+    mapping(string => ElectionInfo) public elections; // Ad ogni elezione è associata una stringa (il codice)
     string[] public electionCodes;
     
 
@@ -55,7 +55,7 @@ contract Election {
         newElection.creator = msg.sender;
         newElection.electionCancelled = false;
 
-        // Aggiungi il controllo per verificare se l'utente ha inviato abbastanza fondi
+        // Controllo per verificare se l'utente ha inviato abbastanza fondi
         require(msg.value >= 0.1 ether, "Devi inviare almeno 0.1 ETH per creare l'elezione!");
 
         newElection.creationCost = msg.value;
@@ -152,8 +152,10 @@ contract Election {
         // Affinche la votazione possa avvenire e' necessario che la data di terminazione della votazione non sia ancora passata
         require(block.timestamp <= election.endDate, "La votazione e' gia' terminata!");
 
+        // Controlla che la votazione non sia stata eliminata
         require(elections[_electionCode].electionCancelled == false, "La votazione e' stata eliminata e non risulta piu' visibile!");
 
+        // Controlla che siano stati inviati abbastanza fondi
         require(msg.value >= 0.05 ether, "Devi inviare almeno 0.05 ETH per votare!");
 
         election.evoters[msg.sender] = true;  // Segna che l'utente ha votato
@@ -184,6 +186,7 @@ contract Election {
         
         // Restituisci i fondi al creatore
         uint refundAmount = election.creationCost;
+        election.creationCost = 0; //questa potrebbe anche essere omessa
         payable(election.creator).transfer(refundAmount);
     }
 
