@@ -42,8 +42,7 @@
 #### 7. Clicca su uno dei server che vengono restituiti per aprire la pagina web
 #### 8. Importa in MetaMask uno degli account creati nella blockchain locale
 #### 9. Clicca sul pulsante "Connettiti a Metamask" per votare
+</details>
 
 <summary><strong>🚀 Installazione & Utilizzo</strong></summary>
-
-</details>
    
