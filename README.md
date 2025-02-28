@@ -1,48 +1,48 @@
 # Blockchain_Voting_Dapp
 <details>
    
-  <h2>🚀 Installazione & Utilizzo</h2>
-  <summary>Installazione...</summary>
+<h2>🚀 Installation & Usage</h2>
+<summary>Installation...</summary>
 
-#### 0. Prerequisiti:
-   - **0.1**: Installa Hardhat:
+#### 0. Prerequisites:
+   - **0.1**: Install Hardhat:
      ```bash
      npm install --save-dev hardhat
      ```
-   - **0.2**: Installa Node.js:
+   - **0.2**: Install Node.js:
      ```bash
      nvm install node
      ```
-   - **0.3**: Installa il pacchetto `http-server` globalmente:
+   - **0.3**: Install the `http-server` package globally:
      ```bash
      npm install -g http-server
      ```
-   - **0.4**: Aggiungi e configura l'estensione **MetaMask** al tuo browser con la seguente rete:
+   - **0.4**: Add and configure the MetaMask extension to your browser with the following network:
      - **RPC URL**: `127.0.0.1:8545`
      - **Chain ID**: `31337`
-     - **Simbolo Moneta**: `GO`
+     - **Coin Symbol**: `GO`
 
-#### 1. Clona la repository:
+#### 1. Clone the repository:
    ```bash
    git clone https://github.com/MatteoAv/Blockchain_Voting_Dapp
    ``` 
-#### 2. Spostati nella cartella del progetto ed apri il terminale
-#### 3. Avvia una blockchain locale:
+#### 2. Go to the project folder and open the terminal
+#### 3. Start a local blockchain:
  ```bash
      npm hardhat node
  ```
-#### 4. Apri una nuova finestra del terminale sempre nella cartella del progetto
-#### 5. Esegui il deploy del contratto: 
+#### 4. Open a new terminal window in the project folder
+#### 5. Deploy the contract:
  ```bash
      npx hardhat run scripts/deploy.js --network localhost
  ```
-#### 6. Spostati nella cartella frontend ed esegui il comando: 
+#### 6. Go to the frontend folder and run the command:
  ```bash
      http-server
  ```
-#### 7. Clicca su uno dei server che vengono restituiti per aprire la pagina web
-#### 8. Importa in MetaMask uno degli account creati nella blockchain locale
-#### 9. Clicca sul pulsante "Connettiti a Metamask" per votare
+#### 7. Click on one of the servers that are returned to open the webpage
+#### 8. Import one of the accounts created in the local blockchain into MetaMask
+#### 9. Click on the "Connect to MetaMask" button to vote
 </details>
 
 ## 🎯 Application Overview: FairVote  
