@@ -1,7 +1,7 @@
 # Blockchain_Voting_Dapp
 
 <details>
-  <summary>**🚀 Installazione & Utilizzo**</h2></summary>
+  <summary>**🚀 Installazione & Utilizzo**</summary>
 
 #### 0. Prerequisiti:
    - **0.1**: Installa Hardhat:
