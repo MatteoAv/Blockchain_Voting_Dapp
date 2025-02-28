@@ -47,7 +47,8 @@
 
 ## 🎥 Watch the Demo:
 
-[![FairVote Demo](https://www.youtube.com/watch?v=FNyESPgQyoM&autoplay=1&loop=1&playlist=FNyESPgQyoM)
+[Watch the Demo](https://www.youtube.com/watch?v=FNyESPgQyoM&autoplay=1&loop=1&playlist=FNyESPgQyoM)
+
 
 
 ## 🎯 Application Overview: FairVote  
