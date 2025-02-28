@@ -49,7 +49,7 @@ FairVote is a DApp (Decentralized Application) designed to ensure a secure and t
 
 A key feature of FairVote is the absence of the need to create an account with personal credentials or log in via third-party accounts (such as Google or Meta). Users can simply connect via their MetaMask wallet, using their public key address on the blockchain to access the platform.
 
-### Main Features of FairVote:
+### 🛠️ Main Features of FairVote:
 
 #### Voting:
 - Users can vote in existing elections using a voting code. After selecting a poll, users can view details such as the name, description, deadline, candidates, and the current vote counts. They can then choose the candidate they want to vote for.
@@ -65,7 +65,7 @@ A key feature of FairVote is the absence of the need to create an account with p
 - Users can view the elections they have created in their profile.
 - For elections that have expired without votes, the creator can delete them. However, because the blockchain is immutable, the election simply becomes invisible and inaccessible. When an election is deleted, the user is refunded the Ether spent on creating it.
 
-### Technologies and Design Patterns Used:
+### 💻 Technologies and Design Patterns Used:
 
 #### Backend:
 - **Solidity** was used for writing the smart contract, with **Hardhat** as the development environment for deploying and testing on the Ethereum blockchain.
