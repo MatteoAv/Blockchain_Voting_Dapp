@@ -44,8 +44,6 @@
 #### 9. Clicca sul pulsante "Connettiti a Metamask" per votare
 </details>
 
-<strong>🗳️ Description and features</strong>
-
 🎯 **Application Overview: FairVote**  
 FairVote is a DApp (Decentralized Application) designed to ensure a secure and transparent electoral process. By leveraging the power of blockchain, FairVote guarantees the immutability of data, increasing user trust in the electoral system. The primary goal of the application is to allow users to participate in elections through a transparent, secure, and accessible platform.
 
