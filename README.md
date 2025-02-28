@@ -44,5 +44,4 @@
 #### 9. Clicca sul pulsante "Connettiti a Metamask" per votare
 </details>
 
-<summary><strong>🚀 Installazione & Utilizzo</strong></summary>
-   
+<strong>🚀 Description and features</strong>
