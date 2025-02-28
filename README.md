@@ -1,7 +1,7 @@
 # Blockchain_Voting_Dapp
 
 <details>
-  <summary><span style="font-size: 20px; font-weight: bold;">🚀 Installazione & Utilizzo</span></summary>
+  <summary>🚀 **INSTALLAZIONE & UTILIZZO**</summary>
 
 
 #### 0. Prerequisiti:
