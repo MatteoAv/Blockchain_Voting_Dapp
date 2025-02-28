@@ -47,7 +47,7 @@
 
 ## 🎥 Watch the Demo:
 
-[Watch the Demo](https://www.youtube.com/watch?v=FNyESPgQyoM&autoplay=1&loop=1&playlist=FNyESPgQyoM)
+[Click to watch the demo video](https://www.youtube.com/watch?v=FNyESPgQyoM&autoplay=1&loop=1&playlist=FNyESPgQyoM)
 
 
 
